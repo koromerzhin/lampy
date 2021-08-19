@@ -1,0 +1,125 @@
+version: "3"
+
+networks:
+  proxylampy:
+    driver: overlay
+    external: true
+  serverlampy:
+    driver: overlay
+    external: true
+
+volumes:
+  certs:
+  portainer_data:
+  mariadb_data:
+
+services:
+  mercure:
+    image: dunglas/mercure:v0.12
+    environment:
+      MERCURE_PUBLISHER_JWT_KEY: "SDDErzDziEaSFkO"
+      MERCURE_SUBSCRIBER_JWT_KEY: "SDDErzDziEaSFkO"
+      ALLOW_ANONYMOUS: 1
+      PUBLISH_ALLOWED_ORIGINS: "*"
+      CORS_ALLOWED_ORIGINS: "*"
+    networks:
+      - serverlampy
+    depends_on:
+      - redis
+    deploy:
+      labels:
+        - "traefik.enable=false"
+  redis:
+    image: redis:6.2.5
+    networks:
+      - serverlampy
+    deploy:
+      labels:
+        - "traefik.enable=false"
+  mariadb:
+    image: mariadb:10.6.4
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      TZ: Europe/Paris
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ${PWD}/dump:/dump
+    networks:
+      - serverlampy
+    deploy:
+      labels:
+        - "traefik.enable=false"
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.1.1
+    environment:
+      PMA_HOST: mariadb
+      MYSQL_ROOT_PASSWORD: example
+    depends_on:
+      - mariadb
+    networks:
+      - serverlampy
+      - proxylampy
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.phpmyadmin.rule=HostRegexp(`phpmyadmin.traefik.me`, `phpmyadmin.{ip:.*}.traefik.me`)"
+        - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
+  portainer:
+    image: portainer/portainer-ce:2.6.2
+    networks:
+      - proxylampy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data portainer/portainer-ce
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.portainer.rule=HostRegexp(`portainer.traefik.me`, `portainer.{ip:.*}.traefik.me`)"
+        - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+  reverse:
+    image: alpine
+    command: sh -c "cd /etc/ssl/traefik && wget traefik.me/cert.pem -O cert.pem && wget traefik.me/privkey.pem -O privkey.pem"
+    volumes:
+      - certs:/etc/ssl/traefik
+    deploy:
+      restart_policy:
+        condition: none
+      labels:
+        - "traefik.enable=false"
+  traefik:
+    # The official v2 Traefik docker image
+    image: traefik:2.4.13
+    environment:
+      - TZ=Europe/Paris
+    # Enables the web UI and tells Traefik to listen to docker
+    ports:
+      - "80:80"
+      - "443:443"
+    command:
+      - --api.insecure=true # set to 'false' on production
+      - --api.dashboard=true # see https://docs.traefik.io/v2.0/operations/dashboard/#secure-mode for how to secure the dashboard
+      - --api.debug=true # enable additional endpoints for debugging and profiling
+      - --log.level=DEBUG # debug while we get it working, for more levels/info see https://docs.traefik.io/observability/logs/
+      - --providers.docker=true
+      - --providers.docker.swarmMode=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=proxylampy
+      - --entrypoints.web.address=:80
+      - --entrypoints.web-secured.address=:443
+    networks:
+      - proxylampy
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - ${PWD}/config/letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${PWD}/config/traefik/traefik.toml:/etc/traefik/traefik.toml
+      - ${PWD}/config/traefik/tls.yml:/etc/traefik/tls.yml
+      - certs:/etc/ssl/traefik
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.traefik.rule=HostRegexp(`traefik.traefik.me`, `traefik.{ip:.*}.traefik.me`)"
+        - "traefik.http.services.traefik.loadbalancer.server.port=8080"
