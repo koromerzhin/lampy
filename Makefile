@@ -11,6 +11,8 @@ ifneq "$(SUPPORTS_MAKE_ARGS)" ""
 endif
 
 install: node_modules ## Installation application
+	@make docker create-network
+	@make docker deploy
 
 linter: ### Scripts Linter
 ifeq ($(COMMAND_ARGS),all)
