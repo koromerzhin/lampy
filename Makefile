@@ -20,8 +20,8 @@ MARIADB_PASSWORD := $(shell more docker-compose.yml | grep MYSQL_ROOT_PASSWORD: 
 
 define mariadb_newbdd
 	$(DOCKER_EXECMARIADB) mysql -e "CREATE DATABASE IF NOT EXISTS \`$(2)\`" -p${MARIADB_PASSWORD}
-	$(DOCKER_EXECMARIADB) mysql -e "CREATE USER IF NOT EXISTS '${1}'@localhost IDENTIFIED BY '${3}';" -p${MARIADB_PASSWORD}
-	$(DOCKER_EXECMARIADB) mysql -e "GRANT ALL PRIVILEGES ON \`${2}\`.* TO '${1}'@localhost;" -p${MARIADB_PASSWORD}
+	$(DOCKER_EXECMARIADB) mysql -e "CREATE USER IF NOT EXISTS '${1}'@% IDENTIFIED BY '${3}';" -p${MARIADB_PASSWORD}
+	$(DOCKER_EXECMARIADB) mysql -e "GRANT ALL PRIVILEGES ON \`${2}\`.* TO '${1}'@%;" -p${MARIADB_PASSWORD}
 endef
 
 linter: ### Scripts Linter
