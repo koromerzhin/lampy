@@ -19,11 +19,11 @@ install: node_modules ## Installation application
 MARIADB_PASSWORD := $(shell more docker-compose.yml | grep MYSQL_ROOT_PASSWORD: | sort --unique | sed -e "s/^.*MYSQL_ROOT_PASSWORD:[[:space:]]//")
 
 define mariadb_newbdd
-	@echo "mysql -e \"CREATE DATABASE IF NOT EXISTS \`$(2)\`\" -p${MARIADB_PASSWORD}\n"
+	@echo -e "mysql -e \"CREATE DATABASE IF NOT EXISTS \`$(2)\`\" -p${MARIADB_PASSWORD}\n"
 	$(DOCKER_EXECMARIADB) mysql -e "CREATE DATABASE IF NOT EXISTS \`$(2)\`" -p${MARIADB_PASSWORD}
-	@echo "mysql -e \"CREATE USER IF NOT EXISTS '${1}'@'%' IDENTIFIED BY '${3}';\" -p${MARIADB_PASSWORD}\n"
+	@echo -e "mysql -e \"CREATE USER IF NOT EXISTS '${1}'@'%' IDENTIFIED BY '${3}';\" -p${MARIADB_PASSWORD}\n"
 	$(DOCKER_EXECMARIADB) mysql -e "CREATE USER IF NOT EXISTS '${1}'@'%' IDENTIFIED BY '${3}';" -p${MARIADB_PASSWORD}
-	@echo "mysql -e \"GRANT ALL PRIVILEGES ON \`${2}\`.* TO '${1}'@'%';\" -p${MARIADB_PASSWORD}\n"
+	@echo -e "mysql -e \"GRANT ALL PRIVILEGES ON \`${2}\`.* TO '${1}'@'%';\" -p${MARIADB_PASSWORD}\n"
 	$(DOCKER_EXECMARIADB) mysql -e "GRANT ALL PRIVILEGES ON \`${2}\`.* TO '${1}'@'%';" -p${MARIADB_PASSWORD}
 endef
 
