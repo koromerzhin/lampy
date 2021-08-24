@@ -16,7 +16,7 @@ install: node_modules ## Installation application
 	@make docker create-network
 	@make docker deploy
 
-MARIADB_PASSWORD := $(more docker-compose.yml | grep MYSQL_ROOT_PASSWORD: | sort --unique | sed -e "s/^.*MYSQL_ROOT_PASSWORD:[[:space:]]//")
+MARIADB_PASSWORD := $(shell more docker-compose.yml | grep MYSQL_ROOT_PASSWORD: | sort --unique | sed -e "s/^.*MYSQL_ROOT_PASSWORD:[[:space:]]//")
 
 define mariadb_newbdd
 	$(DOCKER_EXECMARIADB) mysql -e "CREATE DATABASE IF NOT EXISTS \`$(2)\`" -p${MARIADB_PASSWORD}
