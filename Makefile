@@ -10,14 +10,6 @@ ifneq "$(SUPPORTS_MAKE_ARGS)" ""
   $(eval $(COMMAND_ARGS):;@:)
 endif
 
-GREEN := \033[0;32m
-RED := \033[0;31m
-YELLOW := \033[0;33m
-NC := \033[0m
-NEED := ${GREEN}%-20s${NC}: %s\n
-MISSING :=${RED}ARGUMENT missing${NC}\n
-ARGUMENTS := make ${PURPLE}%s${NC} ${YELLOW}ARGUMENT${NC}\n
-
 DOCKER_EXECMARIADB := @docker exec $(STACK)_mariadb.1.$$(docker service ps -f 'name=$(STACK)_mariadb' $(STACK)_mariadb -q --no-trunc | head -n1)
 
 install: node_modules ## Installation application
