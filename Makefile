@@ -41,10 +41,7 @@ ifeq ($(COMMAND_ARGS),all)
 else ifeq ($(COMMAND_ARGS),readme)
 	@npm run linter-markdown README.md
 else
-	@printf "${MISSING}"
-	@echo "---"
-	@printf "${ARGUMENTS}" linter
-	@echo "---"
+	@printf "${MISSING_ARGUMENTS}" linter
 	@printf "${NEED}" "all" "Launch all linter"
 	@printf "${NEED}" "readme" "linter README.md"
 endif
