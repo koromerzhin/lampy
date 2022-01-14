@@ -21,12 +21,7 @@
     "url": "https://github.com/koromerzhin/lampy/issues"
   },
   "homepage": "https://github.com/koromerzhin/lampy#readme",
-  "devDependencies": {
-    "all-contributors-cli": "6.20.0",
-    "gitmoji-changelog": "2.3.0",
-    "license-checker": "25.0.1",
-    "markdownlint-cli": "0.30.0",
-    "readme-md-generator": "1.0.0",
-    "semantic-git-commit-cli": "3.7.0"
+  "dependencies": {
+    "koromerzhin-dependencies": "^1.1.1"
   }
 }
