@@ -65,6 +65,8 @@ services:
     image: phpmyadmin/phpmyadmin:5.1.1
     environment:
       PMA_HOST: mariadb
+      PMA_USER: root
+      PMA_PASSWORD: example
     depends_on:
       - mariadb
     networks:
