@@ -10,7 +10,7 @@ ifneq "$(SUPPORTS_MAKE_ARGS)" ""
   $(eval $(COMMAND_ARGS):;@:)
 endif
 
-DOCKER_EXECMARIADB := @docker exec $(STACK)_mariadb.1.$$(docker service ps -f 'name=$(STACK)_mariadb' $(STACK)_mariadb -q --no-trunc | head -n1)
+DOCKER_EXECMARIADB := @$(DOCKER_EXEC) $(STACK)_mariadb.1.$$(docker service ps -f 'name=$(STACK)_mariadb' $(STACK)_mariadb -q --no-trunc | head -n1)
 
 install: node_modules ## Installation application
 	@make docker create-network
