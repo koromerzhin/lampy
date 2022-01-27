@@ -62,7 +62,7 @@ services:
         - "traefik.http.routers.mailhog.rule=HostRegexp(`mailhog.traefik.me`, `mailhog.{ip:.*}.traefik.me`)"
         - "traefik.http.services.mailhog.loadbalancer.server.port=8025"
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin:5.1.1
+    image: phpmyadmin/phpmyadmin:5.1.2
     environment:
       PMA_HOST: mariadb
       PMA_USER: root
