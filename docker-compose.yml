@@ -60,6 +60,7 @@ services:
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.mailhog.rule=HostRegexp(`mailhog.traefik.me`, `mailhog.{ip:.*}.traefik.me`)"
+        - "traefik.http.routers.mailhog.tls=true"
         - "traefik.http.services.mailhog.loadbalancer.server.port=8025"
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.1.1
@@ -76,7 +77,7 @@ services:
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.phpmyadmin.rule=HostRegexp(`phpmyadmin.traefik.me`, `phpmyadmin.{ip:.*}.traefik.me`)"
-        - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
+        - "traefik.http.routers.phpmyadmin.tls=true"
   portainer:
     image: portainer/portainer-ce:2.11.0
     networks:
@@ -88,6 +89,7 @@ services:
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.portainer.rule=HostRegexp(`portainer.traefik.me`, `portainer.{ip:.*}.traefik.me`)"
+        - "traefik.http.routers.portainer.tls=true"
         - "traefik.http.services.portainer.loadbalancer.server.port=9000"
   reverse:
     image: alpine
@@ -108,17 +110,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    command:
-      - --api.insecure=true # set to 'false' on production
-      - --api.dashboard=true # see https://docs.traefik.io/v2.0/operations/dashboard/#secure-mode for how to secure the dashboard
-      - --api.debug=true # enable additional endpoints for debugging and profiling
-      - --log.level=DEBUG # debug while we get it working, for more levels/info see https://docs.traefik.io/observability/logs/
-      - --providers.docker=true
-      - --providers.docker.swarmMode=true
-      - --providers.docker.exposedbydefault=false
-      - --providers.docker.network=proxylampy
-      - --entrypoints.web.address=:80
-      - --entrypoints.web-secured.address=:443
     networks:
       - proxylampy
     volumes:
@@ -127,6 +118,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${PWD}/config/traefik/traefik.yml:/etc/traefik/traefik.yml
       - ${PWD}/config/traefik/tls.yml:/etc/traefik/tls.yml
+      - ${PWD}/config/traefik/dashboard.yml:/etc/dyn_config/dashboard.yml
       - traefik_certs:/etc/ssl/traefik
     deploy:
       placement:
@@ -134,5 +126,8 @@ services:
           - node.role == manager
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.traefik.rule=HostRegexp(`traefik.traefik.me`, `traefik.{ip:.*}.traefik.me`)"
+        - "traefik.http.routers.proxy.rule=Host(`proxy.traefik.me`)"
+        - "traefik.http.routers.proxy-tls.tls.domains[0].main=proxy.traefik.me"
+        - "traefik.http.routers.proxy-tls.tls.domains[0].sans=proxy-*.traefik.me"
+        - "traefik.http.routers.proxy.tls=true"
         - "traefik.http.services.traefik.loadbalancer.server.port=8080"
