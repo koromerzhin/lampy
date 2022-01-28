@@ -125,7 +125,7 @@ services:
       # So that Traefik can listen to the Docker events
       - ${PWD}/config/letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${PWD}/config/traefik/traefik.toml:/etc/traefik/traefik.toml
+      - ${PWD}/config/traefik/traefik.yml:/etc/traefik/traefik.yml
       - ${PWD}/config/traefik/tls.yml:/etc/traefik/tls.yml
       - traefik_certs:/etc/ssl/traefik
     deploy:
