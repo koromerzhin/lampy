@@ -63,7 +63,7 @@ services:
         - "traefik.http.routers.mailhog.tls=true"
         - "traefik.http.services.mailhog.loadbalancer.server.port=8025"
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin:5.1.1
+    image: phpmyadmin/phpmyadmin:5.1.2
     environment:
       PMA_HOST: mariadb
       PMA_USER: root
