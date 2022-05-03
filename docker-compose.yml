@@ -47,6 +47,8 @@ services:
       - ${PWD}/mariadb_init:/docker-entrypoint-initdb.d
       - mariadb_data:/var/lib/mysql
       - ${PWD}/dump:/dump
+    ports:
+      - 3306:3306
     networks:
       - serverlampy
     deploy:
@@ -59,6 +61,8 @@ services:
       - postgresql_data:/var/lib/postgresql/data
       - ${PWD}/postgresql_init:/docker-entrypoint-initdb.d
       - ${PWD}/dump:/dump
+    ports:
+      - 5432:5432
     environment:
       POSTGRES_PASSWORD: example
       POSTGRES_INITDB_ARGS: --encoding=UTF-8 --lc-collate=C --lc-ctype=C

@@ -20,6 +20,14 @@ Software:
 - make
 - npm
 
+## Download
+
+```sh
+git clone git@github.com:koromerzhin/lampy.git lampy
+cd lampy
+git submodule update --init
+```
+
 ## Install
 
 ```sh
