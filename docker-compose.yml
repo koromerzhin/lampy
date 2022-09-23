@@ -128,7 +128,7 @@ services:
         - "traefik.enable=false"
   traefik:
     # The official v2 Traefik docker image
-    image: traefik:v2.8.4
+    image: traefik:v2.8.7
     environment:
       - TZ=Europe/Paris
     # Enables the web UI and tells Traefik to listen to docker
