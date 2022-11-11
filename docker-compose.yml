@@ -38,7 +38,7 @@ services:
       labels:
         - "traefik.enable=false"
   mariadb:
-    image: mariadb:10.9.3
+    image: mariadb:10.9.4
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
     environment:
       MYSQL_ROOT_PASSWORD: example
