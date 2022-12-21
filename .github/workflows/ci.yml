@@ -22,18 +22,18 @@ jobs:
             ${{ runner.os }}-node-
       - name: Install npm dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: make node_modules
+        run: npm install
       - name: 'Docker swarm init'
-        run: make docker swarm-init
+        run: npm run docker_swarm-init
       - name: 'Create proxy network'
-        run: make docker create-network
+        run: npm run docker_create-network
       - name: 'Image pull'
-        run: make docker image-pull
+        run: npm run docker_getpull-image
       - name: 'Build containers'
-        run: make docker deploy
+        run: npm run docker_deploy
       - name: 'sleep'
-        run: make sleep 60
+        run: npm run waiting:all
       - name: 'docker ls'
-        run: make docker ls
+        run: npm run docker_ls
       - name: linter readme
-        run: make linter readme
+        run: npx markdownlint readme.md
