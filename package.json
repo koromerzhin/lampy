@@ -9,7 +9,7 @@
     "docker_deploy": "korojscommands docker_deploy --files docker-compose.yml",
     "waiting:all": "korojscommands docker_waiting --container mercure redis mariadb postgresql mailhog phpmyadmin portainer traefik --status running",
     "docker_ls": "korojscommands docker_ls",
-    "exec": "npm run docker_swarm-init && npm run docker_create-network && npm run docker_getpull-image && npm run docker_deploy && npm run waiting:all && npm run docker_ls"
+    "exec": "npm-run-all docker_swarm-init docker_create-network docker_getpull-image docker_deploy waiting:all docker_ls"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,6 @@
   },
   "homepage": "https://github.com/koromerzhin/lampy#readme",
   "dependencies": {
-    "korojscommands": "^1.1.4"
+    "korojscommands": "^1.1.5"
   }
 }
