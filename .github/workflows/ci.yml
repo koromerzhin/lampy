@@ -59,5 +59,5 @@ jobs:
       - name: Install npm dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm install
-      - name: 'Docker swarm init'
+      - name: 'NPM EXEC'
         run: npm run exec
