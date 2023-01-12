@@ -8,7 +8,7 @@
     "docker:deploy": "korojscommands docker_deploy --files docker-compose.yml",
     "docker:getpull-image": "korojscommands docker_getpull-image --files docker-compose.yml",
     "docker:swarm-init": "korojscommands docker_swarm-init",
-    "exec": "npm-run-all docker_swarm-init docker:create-network docker:getpull-image docker:deploy waiting:all docker:ls",
+    "exec": "npm-run-all docker:swarm-init docker:create-network docker:getpull-image docker:deploy waiting:all docker:ls",
     "lint:markdown": "markdownlint readme.md",
     "waiting:all": "korojscommands docker_waiting --container mercure redis mariadb postgresql mailhog phpmyadmin portainer traefik --status running"
   },
