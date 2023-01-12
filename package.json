@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Example local server",
   "scripts": {
-    "docker_ls": "korojscommands docker_ls",
+    "docker:ls": "korojscommands docker_ls",
     "docker:create-network": "korojscommands docker_create-network",
     "docker:deploy": "korojscommands docker_deploy --files docker-compose.yml",
     "docker:getpull-image": "korojscommands docker_getpull-image --files docker-compose.yml",
