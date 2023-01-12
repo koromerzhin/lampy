@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "Example local server",
   "scripts": {
-    "docker_swarm-init": "korojscommands docker_swarm-init",
-    "docker_create-network": "korojscommands docker_create-network",
-    "docker_getpull-image": "korojscommands docker_getpull-image --files docker-compose.yml",
-    "docker_deploy": "korojscommands docker_deploy --files docker-compose.yml",
-    "waiting:all": "korojscommands docker_waiting --container mercure redis mariadb postgresql mailhog phpmyadmin portainer traefik --status running",
     "docker_ls": "korojscommands docker_ls",
-    "exec": "npm-run-all docker_swarm-init docker_create-network docker_getpull-image docker_deploy waiting:all docker_ls"
+    "docker:create-network": "korojscommands docker_create-network",
+    "docker:deploy": "korojscommands docker_deploy --files docker-compose.yml",
+    "docker:getpull-image": "korojscommands docker_getpull-image --files docker-compose.yml",
+    "docker:swarm-init": "korojscommands docker_swarm-init",
+    "exec": "npm-run-all docker_swarm-init docker:create-network docker:getpull-image docker:deploy waiting:all docker:ls",
+    "lint:markdown": "markdownlint readme.md",
+    "waiting:all": "korojscommands docker_waiting --container mercure redis mariadb postgresql mailhog phpmyadmin portainer traefik --status running"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,6 @@
   },
   "homepage": "https://github.com/koromerzhin/lampy#readme",
   "dependencies": {
-    "korojscommands": "^1.1.5"
+    "korojscommands": "^1.2.6"
   }
 }

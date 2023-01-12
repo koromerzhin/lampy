@@ -24,19 +24,19 @@ jobs:
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm install
       - name: 'Docker swarm init'
-        run: npm run docker_swarm-init
+        run: npm run docker:swarm-init
       - name: 'Create proxy network'
-        run: npm run docker_create-network
+        run: npm run docker:create-network
       - name: 'Image pull'
-        run: npm run docker_getpull-image
+        run: npm run docker:getpull-image
       - name: 'Build containers'
-        run: npm run docker_deploy
+        run: npm run docker:deploy
       - name: 'sleep'
         run: npm run waiting:all
       - name: 'docker ls'
-        run: npm run docker_ls
+        run: npm run docker:ls
       - name: linter readme
-        run: npx markdownlint readme.md
+        run: npm run lint:markdown
   exec:
     runs-on: ${{ matrix.operating-system }}
     strategy:
