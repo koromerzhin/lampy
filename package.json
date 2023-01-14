@@ -24,6 +24,6 @@
   },
   "homepage": "https://github.com/koromerzhin/lampy#readme",
   "dependencies": {
-    "korojscommands": "^1.2.6"
+    "korojscommands": "^1.2.7"
   }
 }
