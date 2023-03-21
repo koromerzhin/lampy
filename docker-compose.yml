@@ -31,7 +31,7 @@ services:
       labels:
         - "traefik.enable=false"
   redis:
-    image: redis:7.0.8
+    image: redis:7.0.10
     networks:
       - serverlampy
     deploy:
