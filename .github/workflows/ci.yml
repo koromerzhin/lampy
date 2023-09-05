@@ -9,7 +9,7 @@ jobs:
         operating-system: [ubuntu-22.04]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Cache npm packages
@@ -45,7 +45,7 @@ jobs:
         operating-system: [ubuntu-22.04]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Cache npm packages
