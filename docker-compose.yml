@@ -55,7 +55,7 @@ services:
       labels:
         - "traefik.enable=false"
   postgresql:
-    image: postgres:16.0
+    image: postgres:16.1
     restart: always
     volumes:
       - postgresql_data:/var/lib/postgresql/data
