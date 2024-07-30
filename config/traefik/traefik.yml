@@ -21,7 +21,6 @@ providers:
   docker:
     endpoint: 'unix:///var/run/docker.sock'
     exposedByDefault: true
-    network: proxylampy
   file:
     filename: /etc/traefik/tls.yml
   swarm:
