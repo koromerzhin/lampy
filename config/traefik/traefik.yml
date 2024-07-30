@@ -19,11 +19,9 @@ log:
   level: DEBUG
 providers:
   docker:
-    swarmMode: true
-    network: proxylampy
     endpoint: 'unix:///var/run/docker.sock'
     exposedByDefault: true
-    defaultRule: "HostRegexp(`{{ index .Labels \"com.docker.compose.service\"}}.traefik.me`,`{{ index .Labels \"com.docker.compose.service\"}}-{dashed-ip:.*}.traefik.me`)"
+    network: proxylampy
   file:
     filename: /etc/traefik/tls.yml
   swarm:
