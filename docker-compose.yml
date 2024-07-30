@@ -16,7 +16,7 @@ volumes:
 
 services:
   mercure:
-    image: dunglas/mercure:v0.15
+    image: dunglas/mercure:v0.16
     environment:
       MERCURE_PUBLISHER_JWT_KEY: "SDDErzDziEaSFkO"
       MERCURE_SUBSCRIBER_JWT_KEY: "SDDErzDziEaSFkO"
@@ -38,7 +38,7 @@ services:
       labels:
         - "traefik.enable=false"
   mariadb:
-    image: mariadb:11.2.2
+    image: mariadb:11.4.2
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
     environment:
       MYSQL_ROOT_PASSWORD: example
@@ -55,7 +55,7 @@ services:
       labels:
         - "traefik.enable=false"
   postgresql:
-    image: postgres:16.1
+    image: postgres:16.3
     restart: always
     volumes:
       - postgresql_data:/var/lib/postgresql/data
@@ -102,7 +102,7 @@ services:
         - "traefik.http.routers.phpmyadmin.tls=true"
         - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
   portainer:
-    image: portainer/portainer-ce:2.19.4
+    image: portainer/portainer-ce:2.20.3
     networks:
       - proxylampy
     volumes:
@@ -127,8 +127,7 @@ services:
       labels:
         - "traefik.enable=false"
   traefik:
-    # The official v2 Traefik docker image
-    image: traefik:2.10.7
+    image: traefik:v3.1.0
     environment:
       - TZ=Europe/Paris
     # Enables the web UI and tells Traefik to listen to docker
