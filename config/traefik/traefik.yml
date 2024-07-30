@@ -2,18 +2,8 @@ api:
   dashboard: true
   debug: true
   insecure: true
-log:
-  level: DEBUG
-providers:
-  file:
-    filename: /etc/traefik/tls.yml
-  docker:
-    swarmMode: true
-    network: proxylampy
-    endpoint: 'unix:///var/run/docker.sock'
-    watch: true
-    exposedByDefault: true
-    defaultRule: "HostRegexp(`{{ index .Labels \"com.docker.compose.service\"}}.traefik.me`,`{{ index .Labels \"com.docker.compose.service\"}}-{dashed-ip:.*}.traefik.me`)"
+core:
+  defaultRuleSyntax: v2
 entryPoints:
   web:
     address: ":80"
@@ -25,3 +15,16 @@ entryPoints:
           permanent: true
   websecure:
     address: ":443"
+log:
+  level: DEBUG
+providers:
+  docker:
+    swarmMode: true
+    network: proxylampy
+    endpoint: 'unix:///var/run/docker.sock'
+    exposedByDefault: true
+    defaultRule: "HostRegexp(`{{ index .Labels \"com.docker.compose.service\"}}.traefik.me`,`{{ index .Labels \"com.docker.compose.service\"}}-{dashed-ip:.*}.traefik.me`)"
+  file:
+    filename: /etc/traefik/tls.yml
+  swarm:
+    network: proxylampy
