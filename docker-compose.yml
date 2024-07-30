@@ -127,7 +127,6 @@ services:
       labels:
         - "traefik.enable=false"
   traefik:
-    # The official v2 Traefik docker image
     image: traefik:v3.1.0
     environment:
       - TZ=Europe/Paris
