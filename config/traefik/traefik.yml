@@ -25,3 +25,10 @@ providers:
     filename: /etc/traefik/tls.yml
   swarm:
     network: proxylampy
+http:
+  middlewares:
+    forwardedHeaders:
+      headers:
+        customRequestHeaders:
+          X-Forwarded-For: "{{.ClientIP}}"
+          X-Real-IP: "{{.ClientIP}}"
