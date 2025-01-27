@@ -132,17 +132,22 @@ services:
       - TZ=Europe/Paris
     # Enables the web UI and tells Traefik to listen to docker
     ports:
-      - "80:80"
-      - "443:443"
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host 
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host 
     networks:
       - proxylampy
     volumes:
       # So that Traefik can listen to the Docker events
       - ${PWD}/config/letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${PWD}/config/traefik/traefik.yml:/etc/traefik/traefik.yml
-      - ${PWD}/config/traefik/tls.yml:/etc/traefik/tls.yml
-      - ${PWD}/config/traefik/dashboard.yml:/etc/dyn_config/dashboard.yml
+      - ${PWD}/traefik/traefik.yml:/etc/traefik/traefik.yml
+      - ${PWD}/traefik/middlewares.yml:/etc/traefik/middlewares.yml
       - traefik_certs:/etc/ssl/traefik
     deploy:
       placement:

@@ -22,13 +22,15 @@ providers:
     endpoint: 'unix:///var/run/docker.sock'
     exposedByDefault: true
   file:
-    filename: /etc/traefik/tls.yml
+    filename: /etc/traefik/middlewares.yml
   swarm:
     network: proxylampy
-http:
-  middlewares:
-    forwardedHeaders:
-      headers:
-        customRequestHeaders:
-          X-Forwarded-For: "{{.ClientIP}}"
-          X-Real-IP: "{{.ClientIP}}"
+tls:
+  certificates:
+    - certFile: /etc/ssl/traefik/cert.pem
+      keyFile: /etc/ssl/traefik/privkey.pem
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /etc/ssl/traefik/cert.pem
+        keyFile: /etc/ssl/traefik/privkey.pem
