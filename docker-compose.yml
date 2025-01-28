@@ -18,9 +18,9 @@ services:
   mercure:
     image: dunglas/mercure:v0.18
     environment:
-      MERCURE_PUBLISHER_JWT_KEY: "SDDErzDziEaSFkO"
-      MERCURE_SUBSCRIBER_JWT_KEY: "SDDErzDziEaSFkO"
-      ALLOW_ANONYMOUS: 1
+      MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_PUBLISHER_JWT_KEY}
+      MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_SUBSCRIBER_JWT_KEY}
+      ALLOW_ANONYMOUS: "1"
       PUBLISH_ALLOWED_ORIGINS: "*"
       CORS_ALLOWED_ORIGINS: "*"
     networks:
@@ -41,7 +41,7 @@ services:
     image: mariadb:11.4.2
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
     environment:
-      MYSQL_ROOT_PASSWORD: example
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       TZ: Europe/Paris
     volumes:
       - ${PWD}/mariadb_init:/docker-entrypoint-initdb.d
@@ -64,8 +64,8 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_PASSWORD: example
-      POSTGRES_INITDB_ARGS: --encoding=UTF-8 --lc-collate=C --lc-ctype=C
+      POSTGRES_PASSWORD: ${POSTGRES_ROOT_PASSWORD}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
     deploy:
       labels:
         - "traefik.enable=false"
@@ -88,7 +88,7 @@ services:
     environment:
       PMA_HOST: mariadb
       PMA_USER: root
-      PMA_PASSWORD: example
+      PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     depends_on:
       - mariadb
     networks:
@@ -129,7 +129,7 @@ services:
   traefik:
     image: traefik:v3.3.2
     environment:
-      - TZ=Europe/Paris
+      TZ: Europe/Paris
     # Enables the web UI and tells Traefik to listen to docker
     ports:
       - target: 80
