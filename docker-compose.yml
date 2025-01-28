@@ -2,10 +2,10 @@ version: "3.8"
 
 networks:
   proxylampy:
-    driver: overlay
+    driver: bridge
     external: true
   serverlampy:
-    driver: overlay
+    driver: bridge
     external: true
 
 volumes:
