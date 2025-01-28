@@ -127,7 +127,7 @@ services:
       labels:
         - "traefik.enable=false"
   traefik:
-    image: traefik:v3.1.4
+    image: traefik:v3.3.2
     environment:
       - TZ=Europe/Paris
     # Enables the web UI and tells Traefik to listen to docker
