@@ -16,7 +16,7 @@ volumes:
 
 services:
   mercure:
-    image: dunglas/mercure:v0.16
+    image: dunglas/mercure:v0.18
     environment:
       MERCURE_PUBLISHER_JWT_KEY: "SDDErzDziEaSFkO"
       MERCURE_SUBSCRIBER_JWT_KEY: "SDDErzDziEaSFkO"
