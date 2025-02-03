@@ -11,7 +11,7 @@
     "docker:swarm-init": "korojscommands docker_swarm-init",
     "exec": "npm-run-all docker:swarm-init docker:create-network docker:getpull-image docker:deploy waiting:all docker:ls",
     "lint:markdown": "markdownlint readme.md",
-    "waiting:all": "korojscommands docker_waiting --container mercure redis mariadb postgresql mailhog phpmyadmin portainer traefik --status running"
+    "waiting:all": "korojscommands docker_waiting --container mercure redis mariadb postgresql mailtest phpmyadmin portainer traefik --status running"
   },
   "config": {
     "mariadb": "npx korojscommands docker_getname-container --container mariadb"
