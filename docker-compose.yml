@@ -71,18 +71,18 @@ services:
         - "traefik.enable=false"
     networks:
       - serverlampy
-  mailhog:
-    image: mailhog/mailhog:v1.0.1
+  mailtest:
+    image: axllent/mailpit:v1.22
     networks:
       - serverlampy
       - proxylampy
     deploy:
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.mailhog.rule=Host(`mailhog.traefik.me`)"
-        - "traefik.http.routers.mailhog-tls.tls.domains[0].main=mailhog.traefik.me"
-        - "traefik.http.routers.mailhog.tls=true"
-        - "traefik.http.services.mailhog.loadbalancer.server.port=8025"
+        - "traefik.http.routers.mailtest.rule=Host(`mailtest.traefik.me`)"
+        - "traefik.http.routers.mailtest-tls.tls.domains[0].main=mailtest.traefik.me"
+        - "traefik.http.routers.mailtest.tls=true"
+        - "traefik.http.services.mailtest.loadbalancer.server.port=8025"
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.2.2
     environment:
