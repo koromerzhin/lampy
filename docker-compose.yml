@@ -72,7 +72,7 @@ services:
     networks:
       - serverlampy
   mailtest:
-    image: axllent/mailpit:v1.22
+    image: axllent/mailpit:v1.27
     networks:
       - serverlampy
       - proxylampy
