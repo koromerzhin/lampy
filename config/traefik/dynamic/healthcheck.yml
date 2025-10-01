@@ -1,0 +1,15 @@
+http:
+  routers:
+    ping:
+      rule: "Path(`/ping`)"
+      service: "ping@internal"
+      middlewares:
+        - "ip-allowlist-local@file"
+  
+  middlewares:
+    api-auth:
+      basicAuth:
+        # Utilisateur par défaut: admin:admin (à changer!)
+        # Généré avec: echo $(htpasswd -nb admin admin) | sed -e s/\\$/\\$\\$/g
+        users:
+          - "admin:$apr1$ruca84Hq$mbjdMZBAG.KWn7vfN/SNK/"
