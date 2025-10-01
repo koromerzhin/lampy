@@ -1,0 +1,36 @@
+api:
+  dashboard: true
+  debug: true
+  insecure: true
+core:
+  defaultRuleSyntax: v2
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entrypoint:
+          to: websecure
+          scheme: https
+          permanent: true
+  websecure:
+    address: ":443"
+log:
+  level: DEBUG
+providers:
+  docker:
+    endpoint: 'unix:///var/run/docker.sock'
+    exposedByDefault: true
+  file:
+    filename: /etc/traefik/middlewares.yml
+  swarm:
+    network: proxylampy
+tls:
+  certificates:
+  - certFile: /etc/ssl/traefik/cert.pem
+    keyFile: /etc/ssl/traefik/privkey.pem
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /etc/ssl/traefik/cert.pem
+        keyFile: /etc/ssl/traefik/privkey.pem
