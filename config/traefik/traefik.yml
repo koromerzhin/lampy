@@ -20,11 +20,13 @@ log:
 providers:
   docker:
     endpoint: 'unix:///var/run/docker.sock'
-    exposedByDefault: true
+    exposedByDefault: false
+    swarmMode: true
+    network: proxylampy
+    watch: true
   file:
     filename: /etc/traefik/middlewares.yml
-  swarm:
-    network: proxylampy
+    watch: true
 tls:
   certificates:
   - certFile: /etc/ssl/traefik/cert.pem

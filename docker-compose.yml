@@ -1,11 +1,11 @@
-version: "3.8"
+version: "3.9"
 
 networks:
   proxylampy:
-    driver: bridge
+    driver: overlay
     external: true
   serverlampy:
-    driver: bridge
+    driver: overlay
     external: true
 
 volumes:
@@ -25,9 +25,8 @@ services:
       CORS_ALLOWED_ORIGINS: "*"
     networks:
       - serverlampy
-    depends_on:
-      - redis
     deploy:
+      replicas: 1
       labels:
         - "traefik.enable=false"
   redis:
@@ -35,6 +34,7 @@ services:
     networks:
       - serverlampy
     deploy:
+      replicas: 1
       labels:
         - "traefik.enable=false"
   mariadb:
@@ -44,41 +44,64 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       TZ: Europe/Paris
     volumes:
-      - ${PWD}/mariadb_init:/docker-entrypoint-initdb.d
+      - type: bind
+        source: ./mariadb_init
+        target: /docker-entrypoint-initdb.d
       - mariadb_data:/var/lib/mysql
-      - ${PWD}/dump:/dump
+      - type: bind
+        source: ./dump
+        target: /dump
     ports:
-      - 3306:3306
+      - target: 3306
+        published: 3306
+        protocol: tcp
+        mode: ingress
     networks:
       - serverlampy
     deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
       labels:
         - "traefik.enable=false"
   postgresql:
     image: postgres:17.2
-    restart: always
     volumes:
       - postgresql_data:/var/lib/postgresql/data
-      - ${PWD}/postgresql_init:/docker-entrypoint-initdb.d
-      - ${PWD}/dump:/dump
+      - type: bind
+        source: ./postgresql_init
+        target: /docker-entrypoint-initdb.d
+      - type: bind
+        source: ./dump
+        target: /dump
     ports:
-      - 5432:5432
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: ingress
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_ROOT_PASSWORD}
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
-    deploy:
-      labels:
-        - "traefik.enable=false"
     networks:
       - serverlampy
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - "traefik.enable=false"
   mailtest:
     image: axllent/mailpit:v1.22
     networks:
       - serverlampy
       - proxylampy
     deploy:
+      replicas: 1
       labels:
         - "traefik.enable=true"
+        - "traefik.docker.network=proxylampy"
         - "traefik.http.routers.mailtest.rule=Host(`mailtest.traefik.me`)"
         - "traefik.http.routers.mailtest-tls.tls.domains[0].main=mailtest.traefik.me"
         - "traefik.http.routers.mailtest.tls=true"
@@ -89,14 +112,14 @@ services:
       PMA_HOST: mariadb
       PMA_USER: root
       PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    depends_on:
-      - mariadb
     networks:
       - serverlampy
       - proxylampy
     deploy:
+      replicas: 1
       labels:
         - "traefik.enable=true"
+        - "traefik.docker.network=proxylampy"
         - "traefik.http.routers.phpmyadmin.rule=Host(`phpmyadmin.traefik.me`)"
         - "traefik.http.routers.phpmyadmin-tls.tls.domains[0].main=phpmyadmin.traefik.me"
         - "traefik.http.routers.phpmyadmin.tls=true"
@@ -110,8 +133,13 @@ services:
       - /var/lib/docker/volumes:/var/lib/docker/volumes
       - portainer_data:/data
     deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
       labels:
         - "traefik.enable=true"
+        - "traefik.docker.network=proxylampy"
         - "traefik.http.routers.portainer.rule=Host(`portainer.traefik.me`)"
         - "traefik.http.routers.portainer-tls.tls.domains[0].main=portainer.traefik.me"
         - "traefik.http.routers.portainer.tls=true"
@@ -122,6 +150,10 @@ services:
     volumes:
       - traefik_certs:/etc/ssl/traefik
     deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
       restart_policy:
         condition: none
       labels:
@@ -130,31 +162,37 @@ services:
     image: traefik:v3.3.2
     environment:
       TZ: Europe/Paris
-    # Enables the web UI and tells Traefik to listen to docker
     ports:
       - target: 80
         published: 80
         protocol: tcp
-        mode: host 
+        mode: ingress
       - target: 443
         published: 443
         protocol: tcp
-        mode: host 
+        mode: ingress
     networks:
       - proxylampy
     volumes:
-      # So that Traefik can listen to the Docker events
-      - ${PWD}/config/letsencrypt:/letsencrypt
+      - type: bind
+        source: ./config/letsencrypt
+        target: /letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${PWD}/config/traefik/traefik.yml:/etc/traefik/traefik.yml
-      - ${PWD}/config/traefik/middlewares.yml:/etc/traefik/middlewares.yml
+      - type: bind
+        source: ./config/traefik/traefik.yml
+        target: /etc/traefik/traefik.yml
+      - type: bind
+        source: ./config/traefik/middlewares.yml
+        target: /etc/traefik/middlewares.yml
       - traefik_certs:/etc/ssl/traefik
     deploy:
+      replicas: 1
       placement:
         constraints:
           - node.role == manager
       labels:
         - "traefik.enable=true"
+        - "traefik.docker.network=proxylampy"
         - "traefik.http.routers.proxy.rule=Host(`proxy.traefik.me`)"
         - "traefik.http.routers.proxy-tls.tls.domains[0].main=proxy.traefik.me"
         - "traefik.http.routers.proxy.tls=true"
