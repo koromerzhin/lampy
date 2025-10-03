@@ -64,21 +64,28 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+      - name: Installer docker-compose
+        run: |
+            sudo curl -L "https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+            docker-compose version
+      - name: Install Task
+        uses: go-task/setup-task@v1
       - name: Install npm dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm install
       - name: 'Docker swarm init'
-        run: npm run docker:swarm-init
+        run: task lampy:swarm-init
       - name: 'Create proxy network'
-        run: npm run docker:create-network
+        run: task lampy:create-network
       - name: 'Image pull'
-        run: npm run docker:getpull-image
+        run: task lampy:getpull-image
       - name: 'Build containers'
-        run: npm run docker:deploy
-      - name: 'sleep'
-        run: npm run waiting:all
+        run: task lampy:deploy
+      - name: 'waiting'
+        run: task lampy:waiting
       - name: 'docker ls'
-        run: npm run docker:ls
+        run: task lampy:ls
       - name: linter readme
         run: npm run lint:markdown
   exec:
