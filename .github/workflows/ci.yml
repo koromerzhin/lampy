@@ -41,7 +41,7 @@ jobs:
       - name: 'waiting'
         run: task lampy:waiting
       - name: 'docker ls'
-        run: npm run docker:ls
+        run: task lampy:ls
       - name: linter readme
         run: npm run lint:markdown
   tests:

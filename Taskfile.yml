@@ -85,3 +85,10 @@ tasks:
       vars:
         CONTAINERS: "mercure,redis,mariadb,postgresql,mailtest,phpmyadmin,portainer,traefik"
         STACK_NAME: lampy
+  lampy:ls:
+    desc: "Liste les stacks et services Docker"
+    silent: true
+    cmds:
+    - task: docker:stack:services
+      vars:
+        STACK_NAME: lampy
