@@ -82,7 +82,6 @@ jobs:
       - name: linter readme
         run: npm run lint:markdown
   exec:
-    if: false
     runs-on: ${{ matrix.operating-system }}
     strategy:
       fail-fast: false
@@ -101,8 +100,13 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+      - name: Installer docker-compose
+        run: |
+            sudo curl -L "https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+            docker-compose version
       - name: Install npm dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm install
-      - name: 'NPM EXEC'
-        run: npm run exec
+      - name: 'Lampy EXEC'
+        run: task lampy:exec

@@ -92,3 +92,12 @@ tasks:
     - task: docker:stack:services
       vars:
         STACK_NAME: lampy
+  lampy:exec:
+    desc: "Exécute une commande dans un conteneur en cours d'exécution"
+    cmds:
+    - task: lampy:swarm-init
+    - task: lampy:create-network
+    - task: lampy:getpull-image
+    - task: lampy:deploy
+    - task: lampy:waiting
+    - task: lampy:ls
