@@ -74,3 +74,6 @@ tasks:
     silent: true
     cmds:
     - task: docker:stack:deploy
+      vars:
+        COMPOSE_FILE: ./docker-compose.yml
+        STACK_NAME: lampy
