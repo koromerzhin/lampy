@@ -68,7 +68,7 @@ tasks:
     cmds:
     - task: docker:images:pull
       vars:
-        COMPOSE_FILE: docker-compose.yml
+        COMPOSE_FILE: ./docker-compose.yml
   lampy:deploy:
     desc: "Déploie les stacks Docker définies dans les fichiers docker-compose"
     silent: true
