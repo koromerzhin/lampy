@@ -30,7 +30,7 @@ jobs:
       - name: 'Create proxy network'
         run: task lampy:create-network
       - name: 'Image pull'
-        run: lampy:getpull-image
+        run: task lampy:getpull-image
       - name: 'Build containers'
         run: task lampy:deploy
       - name: 'sleep'
