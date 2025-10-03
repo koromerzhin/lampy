@@ -77,3 +77,10 @@ tasks:
       vars:
         COMPOSE_FILE: ./docker-compose.yml
         STACK_NAME: lampy
+  lampy:waiting:
+    desc: "Attend que les services soient opérationnels"
+    silent: true
+    cmds:
+    - task: docker:stack:check:containers:ready
+      vars:
+        CONTAINERS: "mercure,redis,mariadb,postgresql,mailtest,phpmyadmin,portainer,traefik"

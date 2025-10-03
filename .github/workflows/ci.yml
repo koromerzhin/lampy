@@ -39,7 +39,7 @@ jobs:
       - name: 'Build containers'
         run: task lampy:deploy
       - name: 'sleep'
-        run: npm run waiting:all
+        run: task lampy:waiting
       - name: 'docker ls'
         run: npm run docker:ls
       - name: linter readme
