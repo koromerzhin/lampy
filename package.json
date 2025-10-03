@@ -3,15 +3,7 @@
   "version": "1.0.0",
   "description": "Example local server",
   "scripts": {
-    "bash:mariadb": "docker exec -ti $($npm_package_config_mariadb) bash",
-    "docker:ls": "korojscommands docker_ls",
-    "docker:create-network": "korojscommands docker_create-network",
-    "docker:deploy": "korojscommands docker_deploy --files docker-compose.yml",
-    "docker:getpull-image": "korojscommands docker_getpull-image --files docker-compose.yml",
-    "docker:swarm-init": "korojscommands docker_swarm-init",
-    "exec": "npm-run-all docker:swarm-init docker:create-network docker:getpull-image docker:deploy waiting:all docker:ls",
-    "lint:markdown": "markdownlint readme.md",
-    "waiting:all": "korojscommands docker_waiting --container mercure redis mariadb postgresql mailtest phpmyadmin portainer traefik --status running"
+    "lint:markdown": "markdownlint readme.md"
   },
   "config": {
     "mariadb": "npx korojscommands docker_getname-container --container mariadb"
@@ -26,8 +18,5 @@
   "bugs": {
     "url": "https://github.com/koromerzhin/lampy/issues"
   },
-  "homepage": "https://github.com/koromerzhin/lampy#readme",
-  "dependencies": {
-    "korojscommands": "^1.2.7"
-  }
+  "homepage": "https://github.com/koromerzhin/lampy#readme"
 }
