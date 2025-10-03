@@ -54,13 +54,13 @@ tasks:
     desc: "Crée les réseaux Docker nécessaires au projet"
     silent: true
     cmds:
-    - task: docker:network:create NETWORK=proxylampy NETWORK_DRIVER=overlay
-    - task: docker:network:create NETWORK=serverlampy NETWORK_DRIVER=overlay
+    - task: NETWORK=proxylampy NETWORK_DRIVER=overlay docker:network:create
+    - task: NETWORK=serverlampy NETWORK_DRIVER=overlay docker:network:create
   lampy:getpull-image:
     desc: "Télécharge les images Docker définies dans le docker-compose.yml"
     silent: true
     cmds:
-    - task: docker:images:pull COMPOSE_FILE=docker-compose.yml
+    - task: COMPOSE_FILE=docker-compose.yml docker:images:pull
   lampy:deploy:
     desc: "Déploie les stacks Docker définies dans les fichiers docker-compose"
     silent: true
