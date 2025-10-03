@@ -1,6 +1,44 @@
 name: ci
 on: [push]
 jobs:
+  tasks:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ubuntu-22.04]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Cache npm packages
+        id: npm-cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install Task
+        uses: go-task/setup-task@v1
+      - name: Install npm dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: npm install
+      - name: 'Docker swarm init'
+        run: task lampy:swarm-init
+      - name: 'Create proxy network'
+        run: task lampy:create-network
+      - name: 'Image pull'
+        run: lampy:getpull-image
+      - name: 'Build containers'
+        run: task lampy:deploy
+      - name: 'sleep'
+        run: npm run waiting:all
+      - name: 'docker ls'
+        run: npm run docker:ls
+      - name: linter readme
+        run: npm run lint:markdown
   tests:
     runs-on: ${{ matrix.operating-system }}
     strategy:
