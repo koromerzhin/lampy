@@ -84,3 +84,4 @@ tasks:
     - task: docker:stack:check:containers:ready
       vars:
         CONTAINERS: "mercure,redis,mariadb,postgresql,mailtest,phpmyadmin,portainer,traefik"
+        STACK_NAME: lampy
