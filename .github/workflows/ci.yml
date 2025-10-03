@@ -25,6 +25,10 @@ jobs:
             sudo curl -L "https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
             docker-compose version
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Install Task
         uses: go-task/setup-task@v1
       - name: Install npm dependencies
@@ -68,6 +72,10 @@ jobs:
             sudo curl -L "https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
             docker-compose version
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Install Task
         uses: go-task/setup-task@v1
       - name: Install npm dependencies
