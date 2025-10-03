@@ -45,7 +45,6 @@ jobs:
       - name: linter readme
         run: npm run lint:markdown
   tests:
-    if: false
     runs-on: ${{ matrix.operating-system }}
     strategy:
       fail-fast: false
