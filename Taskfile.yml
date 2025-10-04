@@ -13,7 +13,7 @@ includes:
 
 vars:
   # Variables avec valeurs par défaut depuis .env ou valeurs de fallback
-  PROJECT_NAME: '{{.PROJECT_NAME | default "taskfiles-collection"}}'
+  PROJECT_NAME: '{{.PROJECT_NAME | default "lampy"}}'
   PROJECT_VERSION: '1.0.0'
   ENVIRONMENT: '{{.ENVIRONMENT | default "development"}}'
   SWARM_DEFAULT_ADDR_POOL: '{{.IPSWARM | default "10.20.0.0/16"}}'
