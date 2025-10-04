@@ -101,3 +101,71 @@ tasks:
     - task: lampy:deploy
     - task: lampy:waiting
     - task: lampy:ls
+
+  lampy:bash:
+    desc: "Ouvre un shell bash dans le conteneur MariaDB"
+    internal: true
+    silent: true
+    vars:
+      CONTAINER: '{{.CONTAINER | default ""}}'
+    cmds:
+    - task: docker:stack:shell
+      vars:
+        STACK_NAME: lampy
+        SERVICE_NAME: "{{.CONTAINER}}"
+
+  bash:mariadb:
+    desc: "Ouvre un shell bash dans le conteneur MariaDB"
+    cmds:
+    - task: lampy:bash
+      vars:
+        CONTAINER: mariadb
+
+  bash:mercure:
+    desc: "Ouvre un shell bash dans le conteneur Mercure"
+    cmds:
+    - task: lampy:bash
+      vars:
+        CONTAINER: mercure
+
+  bash:redis:
+    desc: "Ouvre un shell bash dans le conteneur Redis"
+    cmds:
+    - task: lampy:bash
+      vars:
+        CONTAINER: redis
+
+  bash:postgresql:
+    desc: "Ouvre un shell bash dans le conteneur PostgreSQL"
+    cmds:
+    - task: lampy:bash
+      vars:
+        CONTAINER: postgresql
+
+  bash:mailtest:
+    desc: "Ouvre un shell bash dans le conteneur MailTest"
+    cmds:
+    - task: lampy:bash
+      vars:
+        CONTAINER: mailtest
+
+  bash:phpmyadmin:
+    desc: "Ouvre un shell bash dans le conteneur phpMyAdmin"
+    cmds:
+    - task: lampy:bash
+      vars:
+        CONTAINER: phpmyadmin
+
+  bash:portainer:
+    desc: "Ouvre un shell bash dans le conteneur Portainer"
+    cmds:
+    - task: lampy:bash
+      vars:
+        CONTAINER: portainer
+
+  bash:traefik:
+    desc: "Ouvre un shell bash dans le conteneur Traefik"
+    cmds:
+    - task: lampy:bash
+      vars:
+        CONTAINER: traefik
