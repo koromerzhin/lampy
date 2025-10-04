@@ -28,6 +28,7 @@ env:
   COMPOSE_DOCKER_CLI_BUILD: 1
   DOCKER_BUILDKIT: 1
   STACK_NAME: lampy
+  DOCKER_COMPOSE_VERSION: '2.29.7'
   # Optimisations npm
   NPM_CONFIG_PROGRESS: false
   NPM_CONFIG_AUDIT: false
@@ -64,7 +65,7 @@ jobs:
       - name: Setup Docker Compose
         uses: KengoTODA/actions-setup-docker-compose@v1
         with:
-          version: '2.29.7'
+          version: ${{ env.DOCKER_COMPOSE_VERSION }}
 
       - name: Setup Docker cache
         uses: actions/cache@v4
