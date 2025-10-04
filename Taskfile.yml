@@ -81,9 +81,9 @@ tasks:
     desc: "Attend que les services soient opérationnels"
     silent: true
     cmds:
-    - task: docker:stack:check:services:health
+    - task: docker:stack:check:services:simple
       vars:
-        CONTAINERS: "mercure,redis,mariadb,postgresql,mailtest,phpmyadmin,portainer,traefik"
+        SERVICES: "mercure,redis,mariadb,postgresql,mailtest,phpmyadmin,portainer,traefik"
         STACK_NAME: lampy
   lampy:ls:
     desc: "Liste les stacks et services Docker"
