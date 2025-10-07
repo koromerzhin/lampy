@@ -1,4 +1,5 @@
 node_modules
 mariadb_init/*.sql
+!mariadb_init/dump.sql
 postgresql_init/*.sql
 dump
