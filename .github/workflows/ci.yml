@@ -52,18 +52,22 @@ jobs:
       - name: Setup Docker Compose
         uses: docker/setup-compose-action@v1
 
-      - name: Setup Docker cache
+      - name: Setup cache
         uses: actions/cache@v4
         with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: |
+            if [ ! -d node_modules ]; then
+                npm install
+            fi
 
       - name: Install and validate dependencies
         run: |
           echo "📦 Installation et validation des dépendances..."
-          npm ci --prefer-offline
           npm run lint:markdown
           echo "✅ Dépendances installées et validées"
 
