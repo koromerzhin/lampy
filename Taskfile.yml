@@ -50,6 +50,7 @@ tasks:
     silent: true
     cmds:
     - task: docker:swarm:init
+    
   lampy:create-network:
     desc: "Crée les réseaux Docker nécessaires au projet"
     silent: true
@@ -62,6 +63,7 @@ tasks:
       vars:
         NETWORK_NAME: serverlampy
         NETWORK_DRIVER: overlay
+  
   lampy:getpull-image:
     desc: "Télécharge les images Docker définies dans le docker-compose.yml"
     silent: true
@@ -69,6 +71,7 @@ tasks:
     - task: docker:images:pull
       vars:
         COMPOSE_FILE: ./docker-compose.yml
+        
   lampy:deploy:
     desc: "Déploie les stacks Docker définies dans les fichiers docker-compose"
     silent: true
@@ -76,22 +79,25 @@ tasks:
     - task: docker:stack:deploy
       vars:
         COMPOSE_FILE: ./docker-compose.yml
-        STACK_NAME: lampy
+        STACK_NAME: "{{.STACK_NAME}}"
+        
   lampy:waiting:
     desc: "Attend que les services soient opérationnels"
     silent: true
     cmds:
     - task: docker:stack:check:containers:ready
       vars:
-        SERVICES: "mercure,redis,mariadb,postgresql,mailtest,phpmyadmin,portainer,traefik"
-        STACK_NAME: lampy
+        CONTAINERS: "mercure,redis,mariadb,postgresql,mailtest,phpmyadmin,portainer,traefik"
+        STACK_NAME: "{{.STACK_NAME}}"
+        
   lampy:ls:
     desc: "Liste les stacks et services Docker"
     silent: true
     cmds:
     - task: docker:stack:services
       vars:
-        STACK_NAME: lampy
+        STACK_NAME: "{{.STACK_NAME}}"
+        
   lampy:exec:
     desc: "Exécute une commande dans un conteneur en cours d'exécution"
     cmds:
@@ -111,7 +117,7 @@ tasks:
     cmds:
     - task: docker:stack:shell
       vars:
-        STACK_NAME: lampy
+        STACK_NAME: "{{.STACK_NAME}}"
         SERVICE_NAME: "{{.CONTAINER}}"
 
   bash:mariadb:
