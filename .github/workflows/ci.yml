@@ -50,9 +50,7 @@ jobs:
         uses: go-task/setup-task@v1
 
       - name: Setup Docker Compose
-        uses: KengoTODA/actions-setup-docker-compose@v1
-        with:
-          version: ${{ env.DOCKER_COMPOSE_VERSION }}
+        uses: docker/setup-compose-action@v1
 
       - name: Setup Docker cache
         uses: actions/cache@v4
