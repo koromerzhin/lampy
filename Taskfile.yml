@@ -50,7 +50,7 @@ tasks:
     silent: true
     cmds:
     - task: docker:swarm:init
-    
+
   lampy:create-network:
     desc: "Crée les réseaux Docker nécessaires au projet"
     silent: true
@@ -63,7 +63,7 @@ tasks:
       vars:
         NETWORK_NAME: serverlampy
         NETWORK_DRIVER: overlay
-  
+
   lampy:getpull-image:
     desc: "Télécharge les images Docker définies dans le docker-compose.yml"
     silent: true
@@ -71,7 +71,7 @@ tasks:
     - task: docker:images:pull
       vars:
         COMPOSE_FILE: ./docker-compose.yml
-        
+
   lampy:deploy:
     desc: "Déploie les stacks Docker définies dans les fichiers docker-compose"
     silent: true
@@ -80,7 +80,7 @@ tasks:
       vars:
         COMPOSE_FILE: ./docker-compose.yml
         STACK_NAME: "{{.STACK_NAME}}"
-        
+
   lampy:waiting:
     desc: "Attend que les services soient opérationnels"
     silent: true
@@ -89,7 +89,7 @@ tasks:
       vars:
         SERVICES: "mercure,redis,mariadb,postgresql,mailtest,phpmyadmin,portainer,traefik"
         STACK_NAME: "{{.STACK_NAME}}"
-        
+
   lampy:ls:
     desc: "Liste les stacks et services Docker"
     silent: true
@@ -97,7 +97,7 @@ tasks:
     - task: docker:stack:services
       vars:
         STACK_NAME: "{{.STACK_NAME}}"
-        
+
   lampy:exec:
     desc: "Exécute une commande dans un conteneur en cours d'exécution"
     cmds:
@@ -122,6 +122,7 @@ tasks:
 
   bash:mariadb:
     desc: "Ouvre un shell bash dans le conteneur MariaDB"
+    silent: true
     cmds:
     - task: lampy:bash
       vars:
@@ -129,6 +130,7 @@ tasks:
 
   bash:mercure:
     desc: "Ouvre un shell bash dans le conteneur Mercure"
+    silent: true
     cmds:
     - task: lampy:bash
       vars:
@@ -136,6 +138,7 @@ tasks:
 
   bash:redis:
     desc: "Ouvre un shell bash dans le conteneur Redis"
+    silent: true
     cmds:
     - task: lampy:bash
       vars:
@@ -143,6 +146,7 @@ tasks:
 
   bash:postgresql:
     desc: "Ouvre un shell bash dans le conteneur PostgreSQL"
+    silent: true
     cmds:
     - task: lampy:bash
       vars:
@@ -150,6 +154,7 @@ tasks:
 
   bash:mailtest:
     desc: "Ouvre un shell bash dans le conteneur MailTest"
+    silent: true
     cmds:
     - task: lampy:bash
       vars:
@@ -157,6 +162,7 @@ tasks:
 
   bash:phpmyadmin:
     desc: "Ouvre un shell bash dans le conteneur phpMyAdmin"
+    silent: true
     cmds:
     - task: lampy:bash
       vars:
@@ -164,6 +170,7 @@ tasks:
 
   bash:portainer:
     desc: "Ouvre un shell bash dans le conteneur Portainer"
+    silent: true
     cmds:
     - task: lampy:bash
       vars:
@@ -171,6 +178,7 @@ tasks:
 
   bash:traefik:
     desc: "Ouvre un shell bash dans le conteneur Traefik"
+    silent: true
     cmds:
     - task: lampy:bash
       vars:
