@@ -85,7 +85,7 @@ tasks:
     desc: "Attend que les services soient opérationnels"
     silent: true
     cmds:
-    - task: docker:stack:check:containers:ready
+    - task: docker:stack:check:services:simple
       vars:
         CONTAINERS: "mercure,redis,mariadb,postgresql,mailtest,phpmyadmin,portainer,traefik"
         STACK_NAME: "{{.STACK_NAME}}"
