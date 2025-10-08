@@ -2,17 +2,9 @@ name: CI Pipeline
 
 on: 
   push:
-    paths-ignore:
-      - '*.md'
-      - 'docs/**'
-      - '.gitignore'
-      - 'LICENSE'
+    branches: [main, develop]
   pull_request:
-    paths-ignore:
-      - '*.md'
-      - 'docs/**'
-      - '.gitignore'
-      - 'LICENSE'
+    branches: [main, develop]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -20,7 +12,6 @@ concurrency:
 
 env:
   DOCKER_INTERACTIVE: false
-  NODE_VERSION: 22
   COMPOSE_DOCKER_CLI_BUILD: 1
   DOCKER_BUILDKIT: 1
   STACK_NAME: lampy
@@ -43,15 +34,15 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
           fetch-depth: 1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: '.nvmrc'
           cache: 'npm'
           cache-dependency-path: 'package-lock.json'
 
@@ -83,76 +74,7 @@ jobs:
           echo "🐳 Initialisation de l'environnement Docker..."
           task lampy:swarm-init
           task lampy:create-network
-          echo "✅ Environnement Docker initialisé"
-
-      - name: Prepare and deploy stack
-        run: |
-          echo "⬇️ Préparation et déploiement..."
           task lampy:getpull-image
           task lampy:deploy
-          echo "✅ Stack déployée"
-
-      - name: Wait and verify services
-        timeout-minutes: 5
-        run: |
-          echo "⏳ Attente et vérification des services..."
           task lampy:waiting
-          
-          echo "🔍 Vérification de la santé des services..."
-          # Attendre que les services soient en état 'Running'
-          for i in {1..30}; do
-            running_services=$(docker service ls --filter name=${{ env.STACK_NAME }} --format "{{.Replicas}}" | grep -c "1/1" || echo "0")
-            total_services=$(docker service ls --filter name=${{ env.STACK_NAME }} --quiet | wc -l)
-            echo "Services en cours: $running_services/$total_services"
-            
-            if [ "$running_services" -eq "$total_services" ] && [ "$total_services" -gt "0" ]; then
-              echo "✅ Tous les services sont opérationnels"
-              break
-            fi
-            
-            if [ $i -eq 30 ]; then
-              echo "❌ Timeout: Certains services ne sont pas démarrés"
-              docker service ls
-              docker stack ps ${{ env.STACK_NAME }} --no-trunc
-              exit 1
-            fi
-            
-            sleep 10
-          done
-          
-          echo "📊 État final des services:"
-          docker service ls --filter name=${{ env.STACK_NAME }}
-          docker stack ps ${{ env.STACK_NAME }} --format "table {{.Name}}\t{{.Image}}\t{{.CurrentState}}\t{{.Error}}"
-
-      - name: Cleanup on failure
-        if: failure()
-        run: |
-          echo "🧹 Nettoyage des ressources Docker après échec..."
-          echo "📊 Diagnostic des services défaillants:"
-          docker service ls --filter name=${{ env.STACK_NAME }} || true
-          docker stack ps ${{ env.STACK_NAME }} --no-trunc || true
-          
-          echo "� Logs des services (50 dernières lignes):"
-          for service in $(docker service ls --filter name=${{ env.STACK_NAME }} --format "{{.Name}}" 2>/dev/null || echo ""); do
-            echo "--- Logs pour $service ---"
-            docker service logs --tail 50 "$service" 2>/dev/null || echo "Impossible de récupérer les logs pour $service"
-          done
-          
-          echo "🗑️ Suppression de la stack..."
-          docker stack rm ${{ env.STACK_NAME }} || true
-          
-          echo "⏳ Attente de la suppression complète..."
-          timeout 60s bash -c 'while docker service ls --filter name=${{ env.STACK_NAME }} --quiet | grep -q .; do sleep 2; done' || true
-          
-          echo "🧹 Nettoyage final du système..."
-          docker system prune -f --volumes || true
-          echo "✅ Nettoyage terminé"
-
-      - name: Final cleanup
-        if: always()
-        run: |
-          echo "🧹 Nettoyage final automatique..."
-          docker stack rm ${{ env.STACK_NAME }} 2>/dev/null || true
-          timeout 30s bash -c 'while docker service ls --filter name=${{ env.STACK_NAME }} --quiet | grep -q .; do sleep 2; done' || true
-          docker system prune -f 2>/dev/null || true
-          echo "✅ Nettoyage final terminé"
+          echo "✅ Stack déployée"
