@@ -1,9 +1,9 @@
 # Welcome to @koromerzhin/lampy 👋
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000)
+![Version](https://img.shields.io/badge/version-4.1-blue.svg?cacheSeconds=2592000)
 ![Documentation](https://img.shields.io/badge/documentation-yes-brightgreen.svg)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/koromerzhin/lampy/graphs/commit-activity)
-![Continuous Integration](https://github.com/koromerzhin/lampy/workflows/ci/badge.svg?branch=develop)
+![Continuous Integration](https://github.com/koromerzhin/lampy/actions/workflows/ci.yml/badge.svg?branch=develop)
 
 > Example local server
 
