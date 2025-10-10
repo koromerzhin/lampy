@@ -7,6 +7,11 @@ core:
 entryPoints:
   web:
     address: ":80"
+    forwardedHeaders:
+      trustedIPs:
+      - "10.0.0.0/8"
+      - "192.168.0.0/16"
+      - "127.0.0.1/8"
     http:
       redirections:
         entrypoint:
@@ -15,12 +20,20 @@ entryPoints:
           permanent: true
   websecure:
     address: ":443"
+    forwardedHeaders:
+      trustedIPs:
+      - "10.0.0.0/8"
+      - "192.168.0.0/16"
+      - "127.0.0.1/8"
+    strictSNI: true
 log:
-  level: DEBUG
+  level: INFO
 providers:
   docker:
     endpoint: 'unix:///var/run/docker.sock'
-    exposedByDefault: true
+    exposedByDefault: false
+    network: proxylampy
+    watch: true
   file:
     filename: /etc/traefik/middlewares.yml
   swarm:

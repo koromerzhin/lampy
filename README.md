@@ -17,39 +17,31 @@
 
 Software:
 
-- make
-- npm
+- [task](https://taskfile.dev/)
+- [nodejs](https://nodejs.org/)
 
 ## Download
 
 ```sh
-git clone git@github.com:koromerzhin/lampy.git lampy
-cd lampy
-git submodule update --init
+git clone --recursive git@github.com:koromerzhin/lampy.git lampy
 ```
 
 ## Install
 
 ```sh
-make install
+npm install
 ```
 
-## after git add
+## Initialisation
 
 ```sh
-make git check
-```
-
-## Replace git commit
-
-```sh
-make git commit
+task lampy:exec
 ```
 
 ## Help
 
 ```sh
-make help
+task help
 ```
 
 ## Author
