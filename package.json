@@ -1,6 +1,6 @@
 {
   "name": "@koromerzhin/lampy",
-  "version": "4.3",
+  "version": "4.3.0",
   "description": "Example local server",
   "scripts": {
     "lint:markdown": "markdownlint readme.md",
