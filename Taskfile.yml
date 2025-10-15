@@ -14,7 +14,6 @@ includes:
 vars:
   # Variables avec valeurs par défaut depuis .env ou valeurs de fallback
   PROJECT_NAME: '{{.PROJECT_NAME | default "lampy"}}'
-  PROJECT_VERSION: '4.3'
   ENVIRONMENT: '{{.ENVIRONMENT | default "development"}}'
   SWARM_DEFAULT_ADDR_POOL: '{{.IPSWARM | default "10.20.0.0/16"}}'
   SWARM_ADVERTISE_ADDR: '{{.ADVERTISEADDR | default "192.168.1.46"}}'
@@ -41,7 +40,8 @@ tasks:
     silent: true
     cmds:
     - |
-      echo "🛠️  {{.PROJECT_NAME}} v{{.PROJECT_VERSION}} - Collection de Taskfiles"
+      export PROJECT_VERSION=$(jq -r .version package.json)
+      echo "🛠️  {{.PROJECT_NAME}} v$PROJECT_VERSION - Collection de Taskfiles"
       echo "Environnement: {{.ENVIRONMENT}}"
 
   help:
