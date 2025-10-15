@@ -27,7 +27,7 @@ permissions:
   packages: read
 
 jobs:
-  ci:
+  lint:
     name: CI Tests
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -65,11 +65,46 @@ jobs:
                 npm install
             fi
 
-      - name: Install and validate dependencies
+      - name: lint all
+        run: task lint:al
+
+  launch:
+    name: CI Tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
+
+      - name: Setup Task
+        uses: go-task/setup-task@v1
+
+      - name: Setup Docker Compose
+        uses: docker/setup-compose-action@v1
+
+      - name: Setup cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
+
+      - name: Install dependencies
         run: |
-          echo "📦 Installation et validation des dépendances..."
-          npm run lint:markdown
-          echo "✅ Dépendances installées et validées"
+            if [ ! -d node_modules ]; then
+                npm install
+            fi
 
       - name: Initialize Docker environment
         run: |
