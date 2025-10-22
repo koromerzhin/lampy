@@ -17,7 +17,6 @@
   },
   "homepage": "https://github.com/koromerzhin/lampy#readme",
   "devDependencies": {
-    "cypress": "^15.3.0",
     "jscpd": "^4.0.5",
     "release-it": "^19.0.5"
   }
