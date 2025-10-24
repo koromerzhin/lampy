@@ -10,7 +10,6 @@ volumes:
   traefik_certs:
   portainer_data:
   mariadb_data:
-  postgresql_data:
 
 services:
   mercure:
