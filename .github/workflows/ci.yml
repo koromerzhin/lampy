@@ -28,7 +28,6 @@ permissions:
 
 jobs:
   lint:
-    name: CI Tests
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     
@@ -40,7 +39,7 @@ jobs:
           fetch-depth: 1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
@@ -66,10 +65,9 @@ jobs:
             fi
 
       - name: lint all
-        run: task lint:al
+        run: task lint:all
 
   launch:
-    name: CI Tests
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     
@@ -81,7 +79,7 @@ jobs:
           fetch-depth: 1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'

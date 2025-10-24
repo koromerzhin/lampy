@@ -10,11 +10,11 @@ includes:
   env: ./taskfiles/env/Taskfile.yml
   nodejs: ./taskfiles/nodejs/Taskfile.yml
   download: ./taskfiles/download/Taskfile.yml
+  lint: ./taskfiles/lint/Taskfile.yml
 
 vars:
   # Variables avec valeurs par défaut depuis .env ou valeurs de fallback
   PROJECT_NAME: '{{.PROJECT_NAME | default "lampy"}}'
-  PROJECT_VERSION: '4.3'
   ENVIRONMENT: '{{.ENVIRONMENT | default "development"}}'
   SWARM_DEFAULT_ADDR_POOL: '{{.IPSWARM | default "10.20.0.0/16"}}'
   SWARM_ADVERTISE_ADDR: '{{.ADVERTISEADDR | default "192.168.1.46"}}'
@@ -34,14 +34,22 @@ tasks:
   lint:all:
     desc: "Exécute tous les linters disponibles"
     cmds:
-    - npm run lint:markdown
+    - task: lint:yml
+      vars:
+        IGNORE_DIR: "taskfiles"
+    - task: lint:md
+      vars:
+        IGNORE_DIR: "taskfiles"
+    - task: lint:action
+    - task: lint:docker
 
   info:
     desc: "Affiche les informations du projet avec les variables d'environnement"
     silent: true
     cmds:
     - |
-      echo "🛠️  {{.PROJECT_NAME}} v{{.PROJECT_VERSION}} - Collection de Taskfiles"
+      export PROJECT_VERSION=$(jq -r .version package.json)
+      echo "🛠️  {{.PROJECT_NAME}} v$PROJECT_VERSION - Collection de Taskfiles"
       echo "Environnement: {{.ENVIRONMENT}}"
 
   help:
@@ -92,7 +100,7 @@ tasks:
     cmds:
     - task: docker:stack:check:containers:ready
       vars:
-        SERVICES: "mercure,redis,mariadb,postgresql,mailtest,phpmyadmin,portainer,traefik"
+        SERVICES: "mercure,redis,mariadb,mailtest,phpmyadmin,portainer,traefik"
         STACK_NAME: "{{.STACK_NAME}}"
 
   lampy:ls:
