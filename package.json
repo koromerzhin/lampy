@@ -18,6 +18,6 @@
   "homepage": "https://github.com/koromerzhin/lampy#readme",
   "devDependencies": {
     "jscpd": "^4.0.5",
-    "release-it": "^19.0.5"
+    "release-it": "^19.0.6"
   }
 }
