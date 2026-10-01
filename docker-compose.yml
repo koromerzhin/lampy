@@ -52,7 +52,7 @@ services:
       labels:
         - "traefik.enable=false"
   mailtest:
-    image: axllent/mailpit:v1.27
+    image: axllent/mailpit:v1.31
     networks:
       - serverlampy
       - proxylampy
