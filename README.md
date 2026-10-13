@@ -41,10 +41,11 @@ npm ci
 ## Configuration
 
 ```sh
-cp .env.example .env
+task env:init
 ```
 
-Éditez `.env` (jamais committé) : mots de passe, clés JWT Mercure
+Crée `.env` depuis `.env.example` (sans écraser l'existant), puis
+éditez `.env` (jamais committé) : mots de passe, clés JWT Mercure
 (`openssl rand -hex 32`) et surtout `ADVERTISEADDR`, qui **doit** être une
 IP locale existante (`ip -4 addr show`) — sinon `docker swarm init`
 échoue avec « must specify a listening address ».

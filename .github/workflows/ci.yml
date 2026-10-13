@@ -107,5 +107,6 @@ jobs:
       - name: Initialize Docker environment
         run: |
           echo "🐳 Initialisation de l'environnement Docker..."
+          '[ -f .env ] || cp .env.example .env'
           task lampy:exec
           echo "✅ Stack déployée"
