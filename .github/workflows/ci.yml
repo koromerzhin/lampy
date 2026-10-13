@@ -1,4 +1,10 @@
 name: CI Pipeline
+# `lint` : qualité statique (doit rester vert en local avant de merger).
+# `launch` : déploiement Swarm réel — premier endroit où des secrets vides,
+# un hash dashboard invalide ou une image cassée se voient (timeout `waiting`).
+# Checklist avant déploiement (locale comme CI) : `.env` renseigné,
+# `task env:validate` vert, `task lampy:dashboard-password` si le mot de
+# passe dashboard par défaut ne convient plus.
 
 on: 
   push:
@@ -54,6 +60,16 @@ jobs:
       # restauré obsolète/dangereux.
       - name: Install dependencies
         run: npm ci
+
+      # Garde-fou : le middleware dashboard-auth ne doit jamais redevenir
+      # un placeholder (hash invalide = dashboard injoignable, routeur en
+      # erreur). Mot de passe : `task lampy:dashboard-password`.
+      - name: Check dashboard-auth hash
+        run: |
+          if grep -q 'CHANGE_ME' traefik/middlewares.yml; then
+            echo "❌ Placeholder dashboard-auth présent dans traefik/middlewares.yml"
+            exit 1
+          fi
 
       - name: lint all
         run: task lint:all

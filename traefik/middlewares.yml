@@ -6,11 +6,13 @@ http:
         stsIncludeSubdomains: true
         stsPreload: true
     # Protège le dashboard Traefik (router `proxy`, voir docker-compose.yml).
-    # Remplacez le hash ci-dessous par le vôtre AVANT de déployer, sinon le
-    # dashboard répondra 401. Générer un hash APR1 :
-    #   openssl passwd -apr1 'votre-mot-de-passe'
-    # puis collez `admin:<hash>` à la place du placeholder.
+    # DEV UNIQUEMENT : login `admin` ci-dessous. Pour changer le mot de
+    # passe, utilisez la tâche dédiée (hash APR1 régénéré + vérifié) :
+    #   task lampy:dashboard-password
+    # (équivalent manuel : `openssl passwd -apr1 'votre-mot-de-passe'`,
+    # puis remplacez la ligne `users` par `admin:<hash>`).
+    # Après changement : redéployer (`task lampy:deploy`).
     dashboard-auth:
       basicauth:
         users:
-          - "admin:$apr1$CHANGE_ME$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          - 'admin:$apr1$gjaX3/wM$YKS9A4KiiJe.JkIkn0HYs1'

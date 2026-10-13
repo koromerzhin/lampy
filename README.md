@@ -1,41 +1,80 @@
-# Welcome to @koromerzhin/lampy 👋
+# lampy 🛠️
 
 [![Version](https://img.shields.io/github/package-json/v/koromerzhin/lampy)](CHANGELOG.md)
-![Documentation](https://img.shields.io/badge/documentation-yes-brightgreen.svg)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/koromerzhin/lampy/graphs/commit-activity)
-![Continuous Integration](https://github.com/koromerzhin/lampy/actions/workflows/ci.yml/badge.svg?branch=develop)
+[![Continuous Integration](https://github.com/koromerzhin/lampy/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/koromerzhin/lampy/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> Example local server
+> Stack LAMP locale sur Docker Swarm : MariaDB, Redis, Mercure, Mailpit,
+> phpMyAdmin, Portainer et Traefik, pilotée par [Task](https://taskfile.dev/).
 
-## 🏠 [Homepage](https://github.com/koromerzhin/lampy#readme)
+## Services
 
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
+| Service | Image | Accès |
+| ------- | ----- | ----- |
+| traefik | traefik:v3.7.14 | proxy.traefik.me (dashboard) |
+| mercure | dunglas/mercure:v1.0 | interne (/.well-known/mercure) |
+| redis | redis:8.10.1 | interne |
+| mariadb | mariadb:13.0.2 | 127.0.0.1:3306 |
+| mailtest | axllent/mailpit:v1.31 | mailtest.traefik.me |
+| phpmyadmin | phpmyadmin/phpmyadmin:5.2.3 | phpmyadmin.traefik.me |
+| portainer | portainer/portainer-ce:2.45.1 | portainer.traefik.me |
+| reverse | alpine | certificats traefik.me (one-shot) |
 
-## Need
+Les frontaux sont sur le réseau `proxylampy`, les backends sur
+`serverlampy` (voir `docker-compose.yml`).
 
-Software:
+## Prérequis
 
-- [task](https://taskfile.dev/)
-- [nodejs](https://nodejs.org/)
+- [task](https://taskfile.dev/) et [Docker](https://docs.docker.com/) (mode Swarm)
+- [Node.js](https://nodejs.org/) (version dans `.nvmrc`, `nvm use`) pour le lint
+- `openssl` pour (re)générer le mot de passe du dashboard
 
-## Download
+## Installation
 
 ```sh
-git clone --recursive git@github.com:koromerzhin/lampy.git lampy
+git clone --recursive https://github.com/koromerzhin/lampy.git lampy
+cd lampy
+npm ci
 ```
 
-## Install
+## Configuration
 
 ```sh
-npm install
+cp .env.example .env
 ```
 
-## Initialisation
+Éditez `.env` (jamais committé) : mots de passe, clés JWT Mercure
+(`openssl rand -hex 32`) et surtout `ADVERTISEADDR`, qui **doit** être une
+IP locale existante (`ip -4 addr show`) — sinon `docker swarm init`
+échoue avec « must specify a listening address ».
+
+Changez le mot de passe du dashboard Traefik (`admin` / `changeme` par défaut) :
+
+```sh
+task lampy:dashboard-password
+```
+
+Puis validez la configuration :
+
+```sh
+task env:validate
+docker compose config --quiet
+```
+
+## Déploiement
 
 ```sh
 task lampy:exec
+```
+
+Cela enchaîne : init Swarm → réseaux `overlay` → pull des images →
+`docker stack deploy` → attente des 7 services → liste. Suivi au quotidien :
+
+```sh
+task lampy:ls
+task lampy:waiting
+task bash:mariadb   # shell dans un service (mariadb, redis, mercure, …)
 ```
 
 ## ⚠️ Usage local uniquement
@@ -45,44 +84,33 @@ ouvert (`ALLOW_ANONYMOUS`, CORS `*`), certificats `traefik.me` récupérés en
 HTTP, dashboard Traefik protégé par un simple basic-auth. Ne l'exposez pas
 telle quelle sur un réseau non maîtrisé.
 
-## Help
+## Aide
 
 ```sh
+task --list
 task help
+task env:show
 ```
 
-## Author
+## Intégration continue
 
-👤 **koromerzhin**
+- `lint` : `npm ci` + `task lint:all`, avec garde-fou anti-placeholder
+  (`CHANGE_ME` interdit dans `traefik/middlewares.yml`).
+- `launch` : recrée `.env` depuis l'exemple et déploie la stack complète
+  sur le runner — premier endroit où un secret vide ou une image cassée
+  se voient (timeout `lampy:waiting`).
 
-- Website: [https://www.letoullec.fr](https://www.letoullec.fr)
-- Twitter: [@koromerzhin](https://twitter.com/koromerzhin)
-- Github: [@koromerzhin](https://github.com/koromerzhin)
-- LinkedIn: [@koromerzhin](https://linkedin.com/in/koromerzhin)
+## 🤝 Contribution
 
-## 🤝 Contributing
+Contributions, issues et demandes de fonctionnalités bienvenues :
+[issues](https://github.com/koromerzhin/lampy/issues).
 
-Contributions, issues and feature requests are welcome!
-Feel free to check
-[issues page](https://github.com/koromerzhin/lampy/issues).
-You can also take a look at the
-[contributing guide](https://github.com/koromerzhin/lampy/blob/develop/CONTRIBUTING.md).
-
-## Show your support
-
-Give a ⭐️ if this project helped you!
-
-## 📝 License
+## 📝 Licence
 
 Copyright © 2019 [koromerzhin](https://github.com/koromerzhin).
+Projet sous licence [MIT](https://github.com/koromerzhin/lampy/blob/develop/LICENSE).
 
-This project is
-[MIT](https://github.com/koromerzhin/lampy/blob/develop/LICENSE) licensed.
-
-## ✨ Contributors
-
-Thanks goes to these wonderful people
-([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+## ✨ Contributeurs
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -103,12 +131,3 @@ Thanks goes to these wonderful people
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the
-[all-contributors](https://github.com/all-contributors/all-contributors)
-specification. Contributions of any kind welcome!
-
----
-
-_This README was generated with ❤️ by
-[readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
