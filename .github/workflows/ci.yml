@@ -88,6 +88,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Sans `.env`, `docker stack deploy` interpolerait des secrets vides
+      # (ex. clés JWT Mercure → hub en échec → `lampy:waiting` en timeout).
+      # `.env.example` fournit des valeurs de CI sûres.
+      - name: Setup environment files
+        run: cp .env.example .env
+
+      - name: Validate environment files
+        run: task env:validate
+
       - name: Initialize Docker environment
         run: |
           echo "🐳 Initialisation de l'environnement Docker..."
