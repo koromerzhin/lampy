@@ -72,7 +72,9 @@ jobs:
           fi
 
       - name: lint all
-        run: task lint:all
+        run: |
+          '[ -f .env ] || cp .env.example .env'
+          task lint:all
 
   launch:
     runs-on: ubuntu-24.04
