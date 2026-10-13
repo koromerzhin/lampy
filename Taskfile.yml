@@ -116,6 +116,8 @@ tasks:
   lampy:exec:
     desc: "Déploie la stack lampy complète (swarm, réseaux, images, deploy, attente, liste)"
     cmds:
+    - '[ -f .env ] || cp .env.example .env'
+    - task: env:validate
     - task: lampy:swarm-init
     - task: lampy:create-network
     - task: lampy:getpull-image
