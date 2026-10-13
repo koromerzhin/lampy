@@ -5,7 +5,12 @@ http:
         stsSeconds: 31536000
         stsIncludeSubdomains: true
         stsPreload: true
-    httptohttps:
-      redirectscheme:
-        scheme: https
-        permanent: true
+    # Protège le dashboard Traefik (router `proxy`, voir docker-compose.yml).
+    # Remplacez le hash ci-dessous par le vôtre AVANT de déployer, sinon le
+    # dashboard répondra 401. Générer un hash APR1 :
+    #   openssl passwd -apr1 'votre-mot-de-passe'
+    # puis collez `admin:<hash>` à la place du placeholder.
+    dashboard-auth:
+      basicauth:
+        users:
+          - "admin:$apr1$CHANGE_ME$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"

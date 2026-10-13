@@ -45,7 +45,9 @@ services:
       - mariadb_data:/var/lib/mysql
       - ${PWD}/dump:/dump
     ports:
-      - 3306:3306
+      # Restreint au loopback : MariaDB reste joignable via le réseau Docker
+      # (phpMyAdmin est dans la stack), sans exposition au LAN.
+      - "127.0.0.1:3306:3306"
     networks:
       - serverlampy
     deploy:
@@ -138,4 +140,5 @@ services:
         - "traefik.http.routers.proxy.rule=Host(`proxy.traefik.me`)"
         - "traefik.http.routers.proxy-tls.tls.domains[0].main=proxy.traefik.me"
         - "traefik.http.routers.proxy.tls=true"
+        - "traefik.http.routers.proxy.middlewares=dashboard-auth@file"
         - "traefik.http.services.traefik.loadbalancer.server.port=8080"

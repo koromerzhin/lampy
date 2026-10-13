@@ -1,7 +1,7 @@
 api:
   dashboard: true
-  debug: true
-  insecure: true
+  debug: false
+  insecure: false
 core:
   defaultRuleSyntax: v2
 entryPoints:
