@@ -80,12 +80,20 @@ tasks:
         NETWORK_DRIVER: overlay
 
   lampy:getpull-image:
-    desc: "Télécharge les images Docker définies dans le docker-compose.yml"
+    desc: "Télécharge les images Docker définies dans le docker-compose.yml (échec rapide si un pull échoue)"
     silent: true
+    summary: |
+      Pré-télécharge toutes les images du compose pour éviter les timeouts
+      au déploiement. Échoue vite et fort (contrairement à
+      `docker:images:pull` qui tolère les échecs avec un simple avertissement
+      et laisse ensuite `lampy:waiting` expirer sans diagnostic).
+
+      Variables:
+      - COMPOSE_FILE: fichier compose (défaut: ./docker-compose.yml)
+    vars:
+      COMPOSE_FILE: '{{.COMPOSE_FILE | default "./docker-compose.yml"}}'
     cmds:
-    - task: docker:images:pull
-      vars:
-        COMPOSE_FILE: ./docker-compose.yml
+    - docker compose -f {{.COMPOSE_FILE}} pull
 
   lampy:deploy:
     desc: "Déploie les stacks Docker définies dans les fichiers docker-compose"
