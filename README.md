@@ -13,13 +13,13 @@
 | Service | Image | Accès |
 | ------- | ----- | ----- |
 | traefik | traefik:v3.7.14 | proxy.traefik.me (dashboard) |
-| mercure | dunglas/mercure:v1.0 | interne (/.well-known/mercure) |
-| redis | redis:8.10.1 | interne |
+| mercure | dunglas/mercure:v1.1.2 | interne (/.well-known/mercure) |
+| redis | redis:8.10.2 | interne |
 | mariadb | mariadb:13.0.2 | 127.0.0.1:3306 |
-| mailtest | axllent/mailpit:v1.31 | mailtest.traefik.me |
+| mailtest | axllent/mailpit:v1.31.5 | mailtest.traefik.me |
 | phpmyadmin | phpmyadmin/phpmyadmin:5.2.3 | phpmyadmin.traefik.me |
-| portainer | portainer/portainer-ce:2.45.1 | portainer.traefik.me |
-| reverse | alpine | certificats traefik.me (one-shot) |
+| portainer | portainer/portainer-ce:2.45.2 | portainer.traefik.me |
+| reverse | alpine:3.23 | certificats traefik.me (one-shot) |
 
 Les frontaux sont sur le réseau `proxylampy`, les backends sur
 `serverlampy` (voir `docker-compose.yml`).

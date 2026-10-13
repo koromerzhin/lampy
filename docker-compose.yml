@@ -13,10 +13,10 @@ volumes:
 
 services:
   mercure:
-    # Majeure v1.x : vars JWT inchangées (vérifiées dans le Caddyfile amont) ;
-    # à valider au deploy : publication anonyme (ALLOW_ANONYMOUS ci-dessous
-    # ignoré ? → basculer sur MERCURE_EXTRA_DIRECTIVES) + HEALTHCHECK natif.
-    image: dunglas/mercure:v1.0
+    # Majeure v1.x (1.1.2 au 2026-10-13) : vars JWT inchangées (vérifiées
+    # dans le Caddyfile amont) ; à valider au deploy : publication anonyme
+    # (ALLOW_ANONYMOUS ci-dessous ignoré ? → MERCURE_EXTRA_DIRECTIVES).
+    image: dunglas/mercure:v1.1.2
     environment:
       MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_PUBLISHER_JWT_KEY}
       MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_SUBSCRIBER_JWT_KEY}
@@ -33,7 +33,7 @@ services:
       labels:
         - "traefik.enable=false"
   redis:
-    image: redis:8.10.1
+    image: redis:8.10.2
     networks:
       - serverlampy
     deploy:
@@ -61,7 +61,7 @@ services:
       labels:
         - "traefik.enable=false"
   mailtest:
-    image: axllent/mailpit:v1.31
+    image: axllent/mailpit:v1.31.5
     networks:
       - serverlampy
       - proxylampy
@@ -93,7 +93,7 @@ services:
         - "traefik.http.routers.phpmyadmin.middlewares=hsts@file"
         - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
   portainer:
-    image: portainer/portainer-ce:2.45.1
+    image: portainer/portainer-ce:2.45.2
     networks:
       - proxylampy
     volumes:
@@ -111,7 +111,8 @@ services:
   reverse:
     # DEV UNIQUEMENT : récupère les certificats/ clés *publics* de dev
     # traefik.me en HTTP. Acceptable en local, jamais en production.
-    image: alpine
+    # Alpine épinglé sur la branche 3.23 (patchs de sécurité suivis).
+    image: alpine:3.23
     command: sh -c "cd /etc/ssl/traefik && wget traefik.me/cert.pem -O cert.pem && wget traefik.me/privkey.pem -O privkey.pem"
     volumes:
       - traefik_certs:/etc/ssl/traefik
