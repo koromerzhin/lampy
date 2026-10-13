@@ -9,8 +9,14 @@
     "type": "git",
     "url": "git+https://github.com/koromerzhin/lampy.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "docker",
+    "swarm",
+    "traefik",
+    "lamp",
+    "devops"
+  ],
+  "author": "koromerzhin",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/koromerzhin/lampy/issues"

@@ -15,7 +15,6 @@ env:
   COMPOSE_DOCKER_CLI_BUILD: 1
   DOCKER_BUILDKIT: 1
   STACK_NAME: lampy
-  DOCKER_COMPOSE_VERSION: '2.29.7'
   # Optimisations npm
   NPM_CONFIG_PROGRESS: false
   # Optimisations Docker

@@ -13,7 +13,9 @@ includes:
   lint: ./taskfiles/lint/Taskfile.yml
 
 vars:
-  # Variables avec valeurs par défaut depuis .env ou valeurs de fallback
+  # Variables avec valeurs par défaut depuis .env ou valeurs de fallback.
+  # Adresses Swarm adaptées au poste de dev (voir .env.example) :
+  # `docker info -f '{{.Swarm.NodeAddr}}'` pour trouver la vôtre.
   PROJECT_NAME: '{{.PROJECT_NAME | default "lampy"}}'
   ENVIRONMENT: '{{.ENVIRONMENT | default "development"}}'
   SWARM_DEFAULT_ADDR_POOL: '{{.IPSWARM | default "10.20.0.0/16"}}'
@@ -25,7 +27,7 @@ tasks:
     desc: "Affiche l'aide et les tâches disponibles"
     silent: true
     cmds:
-    - echo "🛠️  Collection de Taskfiles pour le développement"
+    - echo "🛠️  Collection de Taskfiles pour lampy"
     - echo ""
     - echo "Tâches globales disponibles :"
     - task --list
@@ -49,7 +51,7 @@ tasks:
     cmds:
     - |
       export PROJECT_VERSION=$(jq -r .version package.json)
-      echo "🛠️  {{.PROJECT_NAME}} v$PROJECT_VERSION - Collection de Taskfiles"
+      echo "🛠️  {{.PROJECT_NAME}} v$PROJECT_VERSION - Stack lampy locale"
       echo "Environnement: {{.ENVIRONMENT}}"
 
   help:
@@ -112,7 +114,7 @@ tasks:
         STACK_NAME: "{{.STACK_NAME}}"
 
   lampy:exec:
-    desc: "Exécute une commande dans un conteneur en cours d'exécution"
+    desc: "Déploie la stack lampy complète (swarm, réseaux, images, deploy, attente, liste)"
     cmds:
     - task: lampy:swarm-init
     - task: lampy:create-network

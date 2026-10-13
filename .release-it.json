@@ -12,7 +12,7 @@
   },
   "hooks": {
     "before:init": [
-      "git pull",
+      "git pull --ff-only",
       "task lint:all"
     ],
     "after:bump": "npx auto-changelog -p"

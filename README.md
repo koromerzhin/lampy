@@ -1,6 +1,6 @@
 # Welcome to @koromerzhin/lampy 👋
 
-![Version](https://img.shields.io/badge/version-4.2-blue.svg?cacheSeconds=2592000)
+[![Version](https://img.shields.io/github/package-json/v/koromerzhin/lampy)](CHANGELOG.md)
 ![Documentation](https://img.shields.io/badge/documentation-yes-brightgreen.svg)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/koromerzhin/lampy/graphs/commit-activity)
 ![Continuous Integration](https://github.com/koromerzhin/lampy/actions/workflows/ci.yml/badge.svg?branch=develop)
@@ -37,6 +37,13 @@ npm install
 ```sh
 task lampy:exec
 ```
+
+## ⚠️ Usage local uniquement
+
+Cette stack est calibrée pour un poste de développement : hub Mercure
+ouvert (`ALLOW_ANONYMOUS`, CORS `*`), certificats `traefik.me` récupérés en
+HTTP, dashboard Traefik protégé par un simple basic-auth. Ne l'exposez pas
+telle quelle sur un réseau non maîtrisé.
 
 ## Help
 

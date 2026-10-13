@@ -1,4 +1,6 @@
 version: 2
+# Scopes disjoints avec Renovate (qui pilote npm + .nvmrc) : Dependabot ne
+# couvre ici que les sous-modules, Docker et les Actions GitHub.
 updates:
 - package-ecosystem: gitsubmodule
   directory: /
@@ -26,17 +28,7 @@ updates:
   - "dependencies"
   - "github-actions"
   open-pull-requests-limit: 10
-# 1️⃣ Dépendances Node.js (npm)
-- package-ecosystem: "npm"
-  directory: "/" # Racine du projet
-  schedule:
-    interval: "weekly" # Peut être daily / weekly / monthly
-  labels:
-  - "dependencies"
-  - "npm"
-  open-pull-requests-limit: 10
-
-# 2️⃣ Dépendances Docker (docker-compose récupère les images du registry)
+# 1️⃣ Dépendances Docker (docker-compose récupère les images du registry)
 - package-ecosystem: "docker"
   directory: "/" # Dependabot va scanner docker-compose.yml
   schedule:
