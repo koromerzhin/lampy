@@ -157,14 +157,6 @@ tasks:
       vars:
         CONTAINER: redis
 
-  bash:postgresql:
-    desc: "Ouvre un shell bash dans le conteneur PostgreSQL"
-    silent: true
-    cmds:
-    - task: lampy:bash
-      vars:
-        CONTAINER: postgresql
-
   bash:mailtest:
     desc: "Ouvre un shell bash dans le conteneur MailTest"
     silent: true

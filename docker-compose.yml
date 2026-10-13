@@ -1,9 +1,9 @@
 networks:
   proxylampy:
-    driver: bridge
+    driver: overlay
     external: true
   serverlampy:
-    driver: bridge
+    driver: overlay
     external: true
 
 volumes:
@@ -13,7 +13,10 @@ volumes:
 
 services:
   mercure:
-    image: dunglas/mercure:v0.20
+    # Majeure v1.x : vars JWT inchangées (vérifiées dans le Caddyfile amont) ;
+    # à valider au deploy : publication anonyme (ALLOW_ANONYMOUS ci-dessous
+    # ignoré ? → basculer sur MERCURE_EXTRA_DIRECTIVES) + HEALTHCHECK natif.
+    image: dunglas/mercure:v1.0
     environment:
       MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_PUBLISHER_JWT_KEY}
       MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_SUBSCRIBER_JWT_KEY}
@@ -28,14 +31,16 @@ services:
       labels:
         - "traefik.enable=false"
   redis:
-    image: redis:8.2.2
+    image: redis:8.10.1
     networks:
       - serverlampy
     deploy:
       labels:
         - "traefik.enable=false"
   mariadb:
-    image: mariadb:12.0.2
+    # Majeure 13.x : sauvegarder le volume mariadb_data avant le premier
+    # démarrage (upgrade du datadir), puis vérifier les logs d'init.
+    image: mariadb:13.0.2
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -54,7 +59,7 @@ services:
       labels:
         - "traefik.enable=false"
   mailtest:
-    image: axllent/mailpit:v1.27
+    image: axllent/mailpit:v1.31
     networks:
       - serverlampy
       - proxylampy
@@ -84,7 +89,7 @@ services:
         - "traefik.http.routers.phpmyadmin.tls=true"
         - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
   portainer:
-    image: portainer/portainer-ce:2.35.0
+    image: portainer/portainer-ce:2.45.1
     networks:
       - proxylampy
     volumes:
@@ -109,7 +114,7 @@ services:
       labels:
         - "traefik.enable=false"
   traefik:
-    image: traefik:v3.5.3
+    image: traefik:v3.7.14
     environment:
       TZ: Europe/Paris
     # Enables the web UI and tells Traefik to listen to docker
