@@ -74,7 +74,7 @@ jobs:
       - name: lint all
         run: |
           task env:init
-          tasl env:validate
+          task env:validate
           task lint:all
 
   launch:
