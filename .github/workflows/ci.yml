@@ -1,4 +1,10 @@
 name: CI Pipeline
+# `lint` : qualité statique (doit rester vert en local avant de merger).
+# `launch` : déploiement Swarm réel — premier endroit où des secrets vides,
+# un hash dashboard invalide ou une image cassée se voient (timeout `waiting`).
+# Checklist avant déploiement (locale comme CI) : `.env` renseigné,
+# `task env:validate` vert, `task lampy:dashboard-password` si le mot de
+# passe dashboard par défaut ne convient plus.
 
 on: 
   push:
@@ -15,10 +21,8 @@ env:
   COMPOSE_DOCKER_CLI_BUILD: 1
   DOCKER_BUILDKIT: 1
   STACK_NAME: lampy
-  DOCKER_COMPOSE_VERSION: '2.29.7'
   # Optimisations npm
   NPM_CONFIG_PROGRESS: false
-  NPM_CONFIG_AUDIT: false
   # Optimisations Docker
   DOCKER_CLI_EXPERIMENTAL: enabled
 
@@ -33,39 +37,45 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           submodules: recursive
           fetch-depth: 1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
           cache-dependency-path: 'package-lock.json'
 
       - name: Setup Task
-        uses: go-task/setup-task@v1
+        uses: go-task/setup-task@v2
 
       - name: Setup Docker Compose
-        uses: docker/setup-compose-action@v1
+        uses: docker/setup-compose-action@v2
 
-      - name: Setup cache
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node-
-
+      # Note : pas de cache actions/cache sur node_modules — setup-node met
+      # déjà en cache le cache npm, et `npm ci` rend tout node_modules
+      # restauré obsolète/dangereux.
       - name: Install dependencies
+        run: npm ci
+
+      # Garde-fou : le middleware dashboard-auth ne doit jamais redevenir
+      # un placeholder (hash invalide = dashboard injoignable, routeur en
+      # erreur). Mot de passe : `task lampy:dashboard-password`.
+      - name: Check dashboard-auth hash
         run: |
-            if [ ! -d node_modules ]; then
-                npm install
-            fi
+          if grep -q 'CHANGE_ME' traefik/middlewares.yml; then
+            echo "❌ Placeholder dashboard-auth présent dans traefik/middlewares.yml"
+            exit 1
+          fi
 
       - name: lint all
-        run: task lint:all
+        run: |
+          task env:init
+          task env:validate
+          task lint:all
 
   launch:
     runs-on: ubuntu-24.04
@@ -73,43 +83,39 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           submodules: recursive
           fetch-depth: 1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
           cache-dependency-path: 'package-lock.json'
 
       - name: Setup Task
-        uses: go-task/setup-task@v1
+        uses: go-task/setup-task@v2
 
       - name: Setup Docker Compose
-        uses: docker/setup-compose-action@v1
+        uses: docker/setup-compose-action@v2
 
-      - name: Setup cache
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node-
-
+      # Note : pas de cache actions/cache sur node_modules — setup-node met
+      # déjà en cache le cache npm, et `npm ci` rend tout node_modules
+      # restauré obsolète/dangereux.
       - name: Install dependencies
-        run: |
-            if [ ! -d node_modules ]; then
-                npm install
-            fi
+        run: npm ci
 
       - name: Initialize Docker environment
         run: |
           echo "🐳 Initialisation de l'environnement Docker..."
+          task env:init
+          task env:validate
           task lampy:swarm-init
           task lampy:create-network
           task lampy:getpull-image
           task lampy:deploy
           task lampy:waiting
+          task lampy:ls
           echo "✅ Stack déployée"

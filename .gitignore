@@ -2,3 +2,7 @@ node_modules
 mariadb_init/*.sql
 !mariadb_init/dump.sql
 dump
+
+# Secrets locaux : le `.env` réel ne doit jamais être committé (voir `.env.example`)
+.env
+.env.backup.*

@@ -5,7 +5,14 @@ http:
         stsSeconds: 31536000
         stsIncludeSubdomains: true
         stsPreload: true
-    httptohttps:
-      redirectscheme:
-        scheme: https
-        permanent: true
+    # Protège le dashboard Traefik (router `proxy`, voir docker-compose.yml).
+    # DEV UNIQUEMENT : login `admin` ci-dessous. Pour changer le mot de
+    # passe, utilisez la tâche dédiée (hash APR1 régénéré + vérifié) :
+    #   task lampy:dashboard-password
+    # (équivalent manuel : `openssl passwd -apr1 'votre-mot-de-passe'`,
+    # puis remplacez la ligne `users` par `admin:<hash>`).
+    # Après changement : redéployer (`task lampy:deploy`).
+    dashboard-auth:
+      basicauth:
+        users:
+          - 'admin:$apr1$gjaX3/wM$YKS9A4KiiJe.JkIkn0HYs1'

@@ -9,15 +9,23 @@
     "type": "git",
     "url": "git+https://github.com/koromerzhin/lampy.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "docker",
+    "swarm",
+    "traefik",
+    "lamp",
+    "devops"
+  ],
+  "author": "koromerzhin",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/koromerzhin/lampy/issues"
   },
   "homepage": "https://github.com/koromerzhin/lampy#readme",
   "devDependencies": {
-    "jscpd": "^4.0.5",
-    "release-it": "^19.0.5"
+    "release-it": "^21.1.1"
+  },
+  "overrides": {
+    "basic-ftp": "6.2.3"
   }
 }
