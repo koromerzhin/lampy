@@ -73,7 +73,8 @@ jobs:
 
       - name: lint all
         run: |
-          '[ -f .env ] || cp .env.example .env'
+          task env:init
+          tasl env:validate
           task lint:all
 
   launch:
