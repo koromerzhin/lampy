@@ -41,7 +41,7 @@ npm ci
 ## Configuration
 
 ```sh
-task env:init
+task lampy:env:init
 ```
 
 Crée `.env` depuis `.env.example` (sans écraser l'existant), puis
