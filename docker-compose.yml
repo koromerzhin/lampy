@@ -16,7 +16,7 @@ services:
     # Majeure v1.x (1.1.2 au 2026-10-13) : vars JWT inchangées (vérifiées
     # dans le Caddyfile amont) ; à valider au deploy : publication anonyme
     # (ALLOW_ANONYMOUS ci-dessous ignoré ? → MERCURE_EXTRA_DIRECTIVES).
-    image: dunglas/mercure:v1.1.2
+    image: dunglas/mercure:v1.1.5
     environment:
       MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_PUBLISHER_JWT_KEY}
       MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_SUBSCRIBER_JWT_KEY}
