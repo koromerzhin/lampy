@@ -1,4 +1,14 @@
 http:
+  routers:
+    proxy:
+      rule: "Host(`proxy.traefik.me`)"
+      service: api@internal
+      entryPoints:
+        - websecure
+      tls: true
+      middlewares:
+        - dashboard-auth@file
+        - hsts@file
   middlewares:
     hsts:
       headers:
@@ -15,4 +25,4 @@ http:
     dashboard-auth:
       basicauth:
         users:
-          - 'admin:$apr1$gjaX3/wM$YKS9A4KiiJe.JkIkn0HYs1'
+          - 'admin:$apr1$gmA5yIa7$VUxAaRjAo1lgv3s.82HBH/'
