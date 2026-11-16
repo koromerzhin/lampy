@@ -112,7 +112,7 @@ services:
     # DEV UNIQUEMENT : récupère les certificats/ clés *publics* de dev
     # traefik.me en HTTP. Acceptable en local, jamais en production.
     # Alpine épinglé sur la branche 3.23 (patchs de sécurité suivis).
-    image: alpine:3.23
+    image: alpine:3.24
     command: sh -c "cd /etc/ssl/traefik && wget traefik.me/cert.pem -O cert.pem && wget traefik.me/privkey.pem -O privkey.pem"
     volumes:
       - traefik_certs:/etc/ssl/traefik
