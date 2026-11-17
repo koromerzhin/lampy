@@ -26,3 +26,13 @@ http:
       basicauth:
         users:
           - 'admin:$apr1$gmA5yIa7$VUxAaRjAo1lgv3s.82HBH/'
+
+tls:
+  certificates:
+    - certFile: /etc/ssl/traefik/cert.pem
+      keyFile: /etc/ssl/traefik/privkey.pem
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /etc/ssl/traefik/cert.pem
+        keyFile: /etc/ssl/traefik/privkey.pem
