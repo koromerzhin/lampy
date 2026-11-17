@@ -192,6 +192,109 @@ tasks:
         exit 1
       fi
 
+  lampy:trust-cert:
+    desc: "Installe le certificat Traefik (auto-signé) dans le trust store local (navigateurs)"
+    silent: true
+    summary: |
+      Extrait le certificat généré dans le volume `lampy_traefik_certs`,
+      puis l'installe dans le trust store système (Fedora) et dans les
+      bases NSS des navigateurs (Chrome/Chromium, Firefox) pour supprimer
+      l'avertissement "certificat auto-signé".
+
+      Prérequis : stack déployée (`task lampy:deploy`) pour que le volume
+      contienne un certificat. Sudo peut être demandé (mot de passe).
+
+      Variables:
+      - CERT_VOLUME: nom du volume Docker (défaut: lampy_traefik_certs)
+      - CERT_NAME: nom affiché du certificat (défaut: lampy-traefik)
+    vars:
+      CERT_VOLUME: '{{.CERT_VOLUME | default "lampy_traefik_certs"}}'
+      CERT_NAME: '{{.CERT_NAME | default "lampy-traefik"}}'
+    cmds:
+    - |
+      set -eu
+      tmpdir="$(mktemp -d)"
+      trap 'rm -rf "$tmpdir"' EXIT
+      cert="$tmpdir/cert.pem"
+      echo "Extraction du certificat depuis le volume {{.CERT_VOLUME}}..."
+      docker run --rm -v {{.CERT_VOLUME}}:/certs alpine:3.23 cat /certs/cert.pem > "$cert"
+      if [ ! -s "$cert" ]; then
+        echo "Certificat introuvable dans le volume {{.CERT_VOLUME}} (stack deployee ?)"
+        exit 1
+      fi
+      echo "Certificat extrait ($(openssl x509 -in "$cert" -noout -subject))"
+
+      cp "$cert" "$HOME/{{.CERT_NAME}}.crt"
+      if command -v update-ca-trust >/dev/null 2>&1 || [ -d /etc/pki/ca-trust/source/anchors ]; then
+        if sudo -n true 2>/dev/null; then
+          sudo install -m 0644 "$cert" "/etc/pki/ca-trust/source/anchors/{{.CERT_NAME}}.crt"
+          sudo update-ca-trust extract
+          echo "Trust store systeme mis a jour"
+        else
+          echo "Sudo non disponible sans mot de passe : installation systeme ignoree."
+          echo "Pour l installer manuellement :"
+          echo "  sudo install -m 0644 \"$HOME/{{.CERT_NAME}}.crt\" /etc/pki/ca-trust/source/anchors/{{.CERT_NAME}}.crt"
+          echo "  sudo update-ca-trust extract"
+        fi
+      else
+        echo "Trust store systeme non detecte - etape ignoree"
+      fi
+
+      nssdb="$HOME/.pki/nssdb"
+      mkdir -p "$nssdb"
+      if [ ! -f "$nssdb/cert9.db" ]; then
+        certutil -d "sql:$nssdb" -N --empty-password >/dev/null 2>&1 || true
+      fi
+      certutil -d "sql:$nssdb" -D -n "{{.CERT_NAME}}" >/dev/null 2>&1 || true
+      if certutil -d "sql:$nssdb" -A -t "C,," -n "{{.CERT_NAME}}" -i "$cert" >/dev/null 2>&1; then
+        echo "Certificat ajoute au NSS utilisateur (Chrome/Chromium)"
+      else
+        echo "Echec ajout NSS utilisateur (certutil) - import manuel possible"
+      fi
+
+      ff_found=0
+      for profile in "$HOME"/.mozilla/firefox/*.default* "$HOME"/.config/mozilla/firefox/*.default* "$HOME"/.var/app/org.mozilla.firefox/data/mozilla/firefox/*.default*; do
+        [ -d "$profile" ] || continue
+        ff_found=1
+        certutil -d "sql:$profile" -D -n "{{.CERT_NAME}}" >/dev/null 2>&1 || true
+        if certutil -d "sql:$profile" -A -t "C,," -n "{{.CERT_NAME}}" -i "$cert" >/dev/null 2>&1; then
+          echo "Firefox : profil $(basename "$profile") mis a jour"
+        else
+          echo "Firefox : echec sur $(basename "$profile")"
+        fi
+      done
+      if [ "$ff_found" = "0" ]; then
+        echo "Aucun profil Firefox trouve (import manuel si utilise)"
+      fi
+
+      echo ""
+      echo "Le certificat est maintenant de confiance pour Chrome et Firefox."
+      echo "Si un navigateur etait ouvert, redemarrez-le."
+      cp "$cert" "$HOME/{{.CERT_NAME}}.crt"
+      echo "Fichier exporte pour import manuel : $HOME/{{.CERT_NAME}}.crt"
+
+  lampy:untrust-cert:
+    desc: "Retire le certificat Traefik du trust store local"
+    silent: true
+    vars:
+      CERT_NAME: '{{.CERT_NAME | default "lampy-traefik"}}'
+    cmds:
+    - |
+      set -eu
+      if [ -f "/etc/pki/ca-trust/source/anchors/{{.CERT_NAME}}.crt" ]; then
+        sudo rm -f "/etc/pki/ca-trust/source/anchors/{{.CERT_NAME}}.crt"
+        sudo update-ca-trust extract
+        echo "Retire du trust store systeme"
+      fi
+      nssdb="$HOME/.pki/nssdb"
+      certutil -d "sql:$nssdb" -D -n "{{.CERT_NAME}}" >/dev/null 2>&1 || true
+      for profile in "$HOME"/.mozilla/firefox/*.default* "$HOME"/.config/mozilla/firefox/*.default* "$HOME"/.var/app/org.mozilla.firefox/data/mozilla/firefox/*.default*; do
+        [ -d "$profile" ] || continue
+        certutil -d "sql:$profile" -D -n "{{.CERT_NAME}}" >/dev/null 2>&1 || true
+      done
+      rm -f "$HOME/{{.CERT_NAME}}.crt"
+      echo "Certificat retire des navigateurs"
+
   lampy:bash:
     desc: "Ouvre un shell bash dans le conteneur MariaDB"
     internal: true

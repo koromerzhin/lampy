@@ -37,12 +37,3 @@ providers:
     filename: /etc/traefik/middlewares.yml
   swarm:
     network: proxylampy
-tls:
-  certificates:
-  - certFile: /etc/ssl/traefik/cert.pem
-    keyFile: /etc/ssl/traefik/privkey.pem
-  stores:
-    default:
-      defaultCertificate:
-        certFile: /etc/ssl/traefik/cert.pem
-        keyFile: /etc/ssl/traefik/privkey.pem
